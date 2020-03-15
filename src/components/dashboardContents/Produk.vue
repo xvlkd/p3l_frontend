@@ -28,7 +28,7 @@
                 <td>{{ item.idProduk }}</td>
                 <td>{{ item.namaProduk }}</td>
                 <td>
-                  <img src="http://kouvee.simbahlucu.com/api/produk/PR0002/gambar" />
+                  <img v-show="getURL()" alt="product" />
                 </td>
                 <td>{{ item.harga }}</td>
                 <td>{{ item.stok }}</td>
@@ -47,70 +47,6 @@
         </v-data-table>
       </v-container>
     </v-card>
-
-    <v-dialog v-model="dialog" presistent max-width="400">
-      <v-card>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-rename-box"
-                  label="Nama Produk*"
-                  v-model="form.namaProduk"
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-cash-usd"
-                  label="Harga Produk*"
-                  type="number"
-                  v-model="form.harga"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-earth-box"
-                  label="Stok*"
-                  type="number"
-                  v-model="form.stok"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-earth-box"
-                  label="Jumlah Minimal*"
-                  type="number"
-                  v-model="form.jumlahMinimal"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <!-- <v-col cols="12">
-                <v-container v-model="form.gambar">
-                  <v-file-input
-                    label="Gambar Produk"
-                    accept="image/png, image/jpeg, image/bmp"
-                    prepend-icon="mdi-camera"
-                  ></v-file-input>
-                </v-container>
-              </v-col>-->
-            </v-row>
-          </v-container>
-          <small>*indicates required field</small>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-dialog v-model="dialog" presistent max-width="400">
       <v-card>
@@ -242,13 +178,19 @@ export default {
       });
     },
 
+    getURL() {
+      var uri = this.$apiUrl + "produk/" + this.idProduk + "/gambar";
+      this.$http.get(uri, this.produks).then(response => {
+        this.produks = response.data.data;
+      });
+    },
+
     sendData() {
       this.produk.append("namaProduk", this.form.namaProduk);
       this.produk.append("harga", this.form.harga);
       this.produk.append("stok", this.form.stok);
       this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
       // this.produk.append("gambar", this.form.gambar);
-
       var uri = this.$apiUrl + "produk";
       this.load = true;
       this.$http
@@ -285,7 +227,6 @@ export default {
       this.produk.append("harga", this.form.harga);
       this.produk.append("stok", this.form.stok);
       this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
-
       var uri = this.$apiUrl + "produk/update/" + this.idProduk;
       this.load = true;
       this.$http
@@ -348,7 +289,6 @@ export default {
       };
     }
   },
-
   mounted() {
     this.getData();
   }
