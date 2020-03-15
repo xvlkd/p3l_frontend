@@ -24,11 +24,11 @@
         <v-data-table :headers="headers" :items="produks" :search="keyword" :loading="load">
           <template v-slot:body="{ items }">
             <tbody>
-              <tr v-for="(item) in items" :key="item.idProduk">
+              <tr v-for="item in items" :key="item.idProduk">
                 <td>{{ item.idProduk }}</td>
                 <td>{{ item.namaProduk }}</td>
                 <td>
-                  <img v-show="getURL()" alt="product" />
+                  <!-- <v-img getURL(item.idProduk)></v-img> -->
                 </td>
                 <td>{{ item.harga }}</td>
                 <td>{{ item.stok }}</td>
@@ -91,15 +91,13 @@
                 ></v-text-field>
               </v-col>
 
-              <!-- <v-col cols="12">
-                <v-container v-model="form.gambar">
-                  <v-file-input
-                    label="Gambar Produk"
-                    accept="image/png, image/jpeg, image/bmp"
-                    prepend-icon="mdi-camera"
-                  ></v-file-input>
-                </v-container>
-              </v-col>-->
+              <v-col cols="12">
+                <v-file-input
+                  label="Gambar Produk"
+                  accept="image/png, image/jpeg, image/bmp"
+                  prepend-icon="mdi-camera"
+                ></v-file-input>
+              </v-col>
             </v-row>
           </v-container>
           <small>*indicates required field</small>
@@ -173,14 +171,14 @@ export default {
   methods: {
     getData() {
       var uri = this.$apiUrl + "produk";
-      this.$http.get(uri, this.produks).then(response => {
+      this.$http.get(uri, this.produk).then(response => {
         this.produks = response.data.data;
       });
     },
 
-    getURL() {
-      var uri = this.$apiUrl + "produk/" + this.idProduk + "/gambar";
-      this.$http.get(uri, this.produks).then(response => {
+    getURL(idProduk) {
+      var uri = this.$apiUrl + "produk/" + `${idProduk}` + "/gambar";
+      this.$http.get(uri, this.produk).then(response => {
         this.produks = response.data.data;
       });
     },
@@ -190,7 +188,7 @@ export default {
       this.produk.append("harga", this.form.harga);
       this.produk.append("stok", this.form.stok);
       this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
-      // this.produk.append("gambar", this.form.gambar);
+
       var uri = this.$apiUrl + "produk";
       this.load = true;
       this.$http
@@ -216,6 +214,7 @@ export default {
     editHandler(item) {
       this.typeInput = "edit";
       this.dialog = true;
+      this.form.idProduk = item.idProduk;
       this.form.namaProduk = item.namaProduk;
       this.form.harga = item.harga;
       this.form.stok = item.stok;
@@ -227,7 +226,7 @@ export default {
       this.produk.append("harga", this.form.harga);
       this.produk.append("stok", this.form.stok);
       this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
-      var uri = this.$apiUrl + "produk/update/" + this.idProduk;
+      var uri = this.$apiUrl + `produk/update/${this.idProduk}`;
       this.load = true;
       this.$http
         .post(uri, this.produk)
@@ -247,6 +246,7 @@ export default {
           this.text = "Try Again";
           this.color = "red";
           this.load = false;
+          this.dialog = false;
           this.typeInput = "new";
         });
     },
@@ -289,6 +289,7 @@ export default {
       };
     }
   },
+
   mounted() {
     this.getData();
   }

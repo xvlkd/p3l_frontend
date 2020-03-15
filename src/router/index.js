@@ -10,7 +10,7 @@ function loadDashboard(view) {
 Vue.use(Router)
 
 const routes = [{
-    path: '/dashboard',
+    path: '/',
     component: Dashboard,
     children: [{
             name: 'Pegawai',
