@@ -28,11 +28,12 @@
                 <td>{{ item.idProduk }}</td>
                 <td>{{ item.namaProduk }}</td>
                 <td>
-                  <!-- <v-img getURL(item.idProduk)></v-img> -->
+                  <!-- <img :src="getImgURL(item.idProduk)" v-bind:alt="produk" /> -->
                 </td>
                 <td>{{ item.harga }}</td>
                 <td>{{ item.stok }}</td>
                 <td>{{ item.jumlahMinimal }}</td>
+                <td>{{ item.idPegawaiLog }}</td>
                 <td>
                   <v-btn icon color="indigo" light @click="editHandler(item)">
                     <v-icon>mdi-pencil</v-icon>
@@ -58,6 +59,7 @@
                   prepend-icon="mdi-rename-box"
                   label="Nama Produk*"
                   v-model="form.namaProduk"
+                  required
                 ></v-text-field>
               </v-col>
 
@@ -96,6 +98,8 @@
                   label="Gambar Produk"
                   accept="image/png, image/jpeg, image/bmp"
                   prepend-icon="mdi-camera"
+                  v-model="form.gambar"
+                  required
                 ></v-file-input>
               </v-col>
             </v-row>
@@ -133,7 +137,7 @@ export default {
       },
       {
         text: "Gambar Produk",
-        value: "gambar"
+        value: ""
       },
       {
         text: "Harga",
@@ -146,6 +150,10 @@ export default {
       {
         text: "Jumlah Minimal",
         value: "jumlahMinimal"
+      },
+      {
+        text: "Created By",
+        value: "idPegawaiLog"
       },
       {
         text: "Action",
@@ -161,8 +169,9 @@ export default {
       namaProduk: "",
       harga: "",
       stok: "",
-      jumlahMinimal: ""
-      // gambar: ""
+      jumlahMinimal: "",
+      gambar: "",
+      idPegawaiLog: "Owner"
     },
     produk: new FormData(),
     typeInput: "new",
@@ -176,7 +185,7 @@ export default {
       });
     },
 
-    getURL(idProduk) {
+    getImgURL(idProduk) {
       var uri = this.$apiUrl + "produk/" + `${idProduk}` + "/gambar";
       this.$http.get(uri, this.produk).then(response => {
         this.produks = response.data.data;
@@ -188,6 +197,8 @@ export default {
       this.produk.append("harga", this.form.harga);
       this.produk.append("stok", this.form.stok);
       this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
+      this.produk.append("gambar", this.form.gambar);
+      this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "produk";
       this.load = true;
@@ -214,11 +225,12 @@ export default {
     editHandler(item) {
       this.typeInput = "edit";
       this.dialog = true;
-      this.form.idProduk = item.idProduk;
+      this.idProduk = item.idProduk;
       this.form.namaProduk = item.namaProduk;
       this.form.harga = item.harga;
       this.form.stok = item.stok;
       this.form.jumlahMinimal = item.jumlahMinimal;
+      this.form.gambar = item.gambar;
     },
 
     updateData() {
@@ -226,6 +238,9 @@ export default {
       this.produk.append("harga", this.form.harga);
       this.produk.append("stok", this.form.stok);
       this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
+      this.produk.append("gambar", this.form.gambar);
+      this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
+
       var uri = this.$apiUrl + `produk/update/${this.idProduk}`;
       this.load = true;
       this.$http
@@ -284,8 +299,9 @@ export default {
         namaProduk: "",
         harga: "",
         stok: "",
-        jumlahMinimal: ""
-        // gambar: ""
+        jumlahMinimal: "",
+        gambar: "",
+        idPegawaiLog: "Owner"
       };
     }
   },
