@@ -28,7 +28,11 @@
                 <td>{{ item.idProduk }}</td>
                 <td>{{ item.namaProduk }}</td>
                 <td>
-                  <!-- <img :src="getImgURL(item.idProduk)" v-bind:alt="produk" /> -->
+                  <v-img
+                    :src="$apiUrl + 'produk/' + item.idProduk + '/gambar'"
+                    width="80"
+                    height="80"
+                  ></v-img>
                 </td>
                 <td>{{ item.harga }}</td>
                 <td>{{ item.stok }}</td>
@@ -180,13 +184,6 @@ export default {
   methods: {
     getData() {
       var uri = this.$apiUrl + "produk";
-      this.$http.get(uri, this.produk).then(response => {
-        this.produks = response.data.data;
-      });
-    },
-
-    getImgURL(idProduk) {
-      var uri = this.$apiUrl + "produk/" + `${idProduk}` + "/gambar";
       this.$http.get(uri, this.produk).then(response => {
         this.produks = response.data.data;
       });
