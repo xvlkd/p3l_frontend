@@ -52,32 +52,37 @@ export default {
         {
           title: "Pegawai",
           icon: "mdi-account-group",
-          to: "/Pegawai"
+          to: "/pegawai"
         },
         {
           title: "Customer",
           icon: "mdi-account-box-multiple",
-          to: "/Pelanggan"
+          to: "/customer"
         },
         {
           title: "Layanan",
           icon: "mdi-face-agent",
-          to: "/Layanan"
+          to: "/layanan"
         },
         {
           title: "Produk",
           icon: "mdi-package-variant-closed",
-          to: "/Produk"
+          to: "/produk"
         },
         {
           title: "Supplier",
           icon: "mdi-truck-fast",
-          to: "/Supplier"
+          to: "/supplier"
         },
         {
           title: "Jenis Hewan",
           icon: "mdi-dog",
           to: "/jenisHewan"
+        },
+        {
+          title: "Ukuran Hewan",
+          icon: "mdi-dog",
+          to: "/ukuranHewan"
         }
       ]
     };

@@ -155,11 +155,12 @@ export default {
 
     updateData() {
       this.jenis.append("namaJenis", this.form.namaJenis);
+      this.jenis.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + `jenisHewan/${this.idJenis}`;
       this.load = true;
       this.$http
-        .put(uri, this.jenis)
+        .post(uri, this.jenis)
         .then(response => {
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
@@ -204,7 +205,6 @@ export default {
       if (this.typeInput === "new") {
         this.sendData();
       } else {
-        console.log("dddd");
         this.updateData();
       }
     },

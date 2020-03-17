@@ -14,28 +14,33 @@ const routes = [{
     component: Dashboard,
     children: [{
             name: 'Pegawai',
-            path: '/Pegawai',
+            path: '/pegawai',
             component: loadDashboard('Pegawai')
         },
         {
             name: 'Layanan',
-            path: '/Layanan',
+            path: '/layanan',
             component: loadDashboard('Layanan')
         },
         {
             name: 'Produk',
-            path: '/Produk',
+            path: '/produk',
             component: loadDashboard('Produk')
         },
         {
             name: 'Supplier',
-            path: '/Supplier',
+            path: '/supplier',
             component: loadDashboard('Supplier')
         },
         {
             name: 'Jenis Hewan',
             path: '/jenisHewan',
             component: loadDashboard('JenisHewan')
+        },
+        {
+            name: 'Ukuran Hewan',
+            path: '/ukuranHewan',
+            component: loadDashboard('UkuranHewan')
         },
     ]
 }, ]
