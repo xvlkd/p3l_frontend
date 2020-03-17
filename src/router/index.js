@@ -18,6 +18,11 @@ const routes = [{
             component: loadDashboard('Pegawai')
         },
         {
+            name: 'Customer',
+            path: '/Customer',
+            component: loadDashboard('Customer')
+        },
+        {
             name: 'Layanan',
             path: '/Layanan',
             component: loadDashboard('Layanan')

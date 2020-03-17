@@ -57,7 +57,7 @@ export default {
         {
           title: "Customer",
           icon: "mdi-account-box-multiple",
-          to: "/Pelanggan"
+          to: "/Customer"
         },
         {
           title: "Layanan",
