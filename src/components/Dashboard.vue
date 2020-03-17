@@ -55,7 +55,7 @@ export default {
           to: "/Pegawai"
         },
         {
-          title: "Pelanggan",
+          title: "Customer",
           icon: "mdi-account-box-multiple",
           to: "/Pelanggan"
         },
@@ -73,6 +73,11 @@ export default {
           title: "Supplier",
           icon: "mdi-truck-fast",
           to: "/Supplier"
+        },
+        {
+          title: "Jenis Hewan",
+          icon: "mdi-dog",
+          to: "/jenisHewan"
         }
       ]
     };

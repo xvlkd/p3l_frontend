@@ -32,6 +32,11 @@ const routes = [{
             path: '/Supplier',
             component: loadDashboard('Supplier')
         },
+        {
+            name: 'Jenis Hewan',
+            path: '/jenisHewan',
+            component: loadDashboard('JenisHewan')
+        },
     ]
 }, ]
 
