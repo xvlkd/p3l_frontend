@@ -141,7 +141,7 @@ export default {
 
       var uri = this.$apiUrl + "customer";
       this.load = true;
-      this.$http.post(uri, this.customer);
+      this.$http.post(uri, this.customer).then(this.getData(), this.resetForm(), this.load = false);
     },
 
     updateData() {
@@ -153,12 +153,12 @@ export default {
 
       var uri = this.$apiUrl + "customer/" + this.idCustomer;
       this.load = true;
-      this.$http.post(uri, this.customer);
+      this.$http.post(uri, this.customer).then(this.getData(), this.resetForm(), this.load = false);
     },
 
     deleteData(idCustomer) {
       var uri = this.$apiUrl + "customer/" + idCustomer; //data dihapus berdasarkan id
-      this.$http.delete(uri);
+      this.$http.delete(uri).then(this.getData(), this.resetForm(), this.load = false,);
     },
 
     editHandler(item) {
@@ -174,8 +174,10 @@ export default {
     setForm() {
       if (this.typeInput === "new") {
         this.sendData();
+        this.dialog = false;
       } else {
         this.updateData();
+        this.dialog = false;
       }
     },
 

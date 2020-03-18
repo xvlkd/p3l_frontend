@@ -140,7 +140,7 @@ export default {
 
       var uri = this.$apiUrl + "layanan";
       this.load = true;
-      this.$http.post(uri, this.layanan);
+      this.$http.post(uri, this.layanan).then(this.getData(), this.resetForm(), this.load = false,);
     },
 
     updateData() {
@@ -152,12 +152,12 @@ export default {
 
       var uri = this.$apiUrl + "layanan/" + this.idLayanan;
       this.load = true;
-      this.$http.post(uri, this.layanan);
+      this.$http.post(uri, this.layanan).then(this.getData(), this.resetForm(), this.load = false,);
     },
 
     deleteData(idLayanan) {
       var uri = this.$apiUrl + "layanan/" + idLayanan; //data dihapus berdasarkan id
-      this.$http.delete(uri);
+      this.$http.delete(uri).then(this.getData(), this.resetForm(), this.load = false,);
     },
 
     editHandler(item) {

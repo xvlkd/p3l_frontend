@@ -81,7 +81,7 @@ export default {
         },
         {
           title: "Ukuran Hewan",
-          icon: "mdi-dog",
+          icon: "mdi-size-xxl",
           to: "/ukuranHewan"
         }
       ]
