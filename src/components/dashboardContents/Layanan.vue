@@ -68,8 +68,8 @@
       </v-dialog>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
-      <v-icon @click="deleteData(item.idLayanan)">mdi-delete</v-icon>
+      <v-icon color="indigo" class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
+      <v-icon color="error" @click="deleteData(item.idLayanan)">mdi-delete</v-icon>
     </template>
   </v-data-table>
 </template>
