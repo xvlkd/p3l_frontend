@@ -2,7 +2,7 @@
   <v-container>
     <v-card width="100%">
       <v-container grid-list-md mb-0>
-        <h2 class="text-md-center">Data Produk</h2>
+        <h2 class="text-md-center">Data Ukuran Hewan</h2>
         <v-layout row wrap style="margin:10px">
           <v-flex xs6>
             <v-btn
@@ -13,7 +13,7 @@
               color="green accent-3"
               @click="dialog=true"
             >
-              <v-icon size="18" class="mr-2">mdi-pencil-plus</v-icon>Tambah Produk
+              <v-icon size="18" class="mr-2">mdi-pencil-plus</v-icon>Tambah Ukuran Hewan
             </v-btn>
           </v-flex>
           <v-flex xs6 class="text-right">
@@ -21,28 +21,18 @@
           </v-flex>
         </v-layout>
 
-        <v-data-table :headers="headers" :items="produks" :search="keyword" :loading="load">
+        <v-data-table :headers="headers" :items="ukurans" :search="keyword" :loading="load">
           <template v-slot:body="{ items }">
             <tbody>
-              <tr v-for="item in items" :key="item.idProduk">
-                <td>{{ item.idProduk }}</td>
-                <td>{{ item.namaProduk }}</td>
-                <td>
-                  <v-img
-                    :src="$apiUrl + 'produk/' + item.idProduk + '/gambar'"
-                    width="80"
-                    height="80"
-                  ></v-img>
-                </td>
-                <td>{{ item.harga }}</td>
-                <td>{{ item.stok }}</td>
-                <td>{{ item.jumlahMinimal }}</td>
+              <tr v-for="item in items" :key="item.idUkuran">
+                <td>{{ item.idUkuran }}</td>
+                <td>{{ item.namaUkuran }}</td>
                 <td>{{ item.idPegawaiLog }}</td>
                 <td>
                   <v-btn icon color="indigo" light @click="editHandler(item)">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
-                  <v-btn icon color="error" light @click="deleteData(item.idProduk)">
+                  <v-btn icon color="error" light @click="deleteData(item.idUkuran)">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </td>
@@ -61,50 +51,10 @@
               <v-col cols="12">
                 <v-text-field
                   prepend-icon="mdi-rename-box"
-                  label="Nama Produk*"
-                  v-model="form.namaProduk"
+                  label="Ukuran Hewan*"
+                  v-model="form.namaUkuran"
                   required
                 ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-cash-usd"
-                  label="Harga Produk*"
-                  type="number"
-                  v-model="form.harga"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-earth-box"
-                  label="Stok*"
-                  type="number"
-                  v-model="form.stok"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-earth-box"
-                  label="Jumlah Minimal*"
-                  type="number"
-                  v-model="form.jumlahMinimal"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-file-input
-                  label="Gambar Produk"
-                  accept="image/png, image/jpeg, image/bmp"
-                  prepend-icon="mdi-camera"
-                  v-model="form.gambar"
-                  required
-                ></v-file-input>
               </v-col>
             </v-row>
           </v-container>
@@ -124,6 +74,7 @@
     </v-snackbar>
   </v-container>
 </template>
+
 <script>
 export default {
   data: () => ({
@@ -132,28 +83,12 @@ export default {
     keyword: "",
     headers: [
       {
-        text: "ID Produk",
-        value: "idProduk"
+        text: "ID Ukuran Hewan",
+        value: "idUkuran"
       },
       {
-        text: "Nama Produk",
-        value: "namaProduk"
-      },
-      {
-        text: "Gambar Produk",
-        value: ""
-      },
-      {
-        text: "Harga",
-        value: "harga"
-      },
-      {
-        text: "Stok Tersedia",
-        value: "stok"
-      },
-      {
-        text: "Jumlah Minimal",
-        value: "jumlahMinimal"
+        text: "Nama Ukuran Hewan",
+        value: "namaUkuran"
       },
       {
         text: "Created By",
@@ -165,43 +100,35 @@ export default {
         sortable: false
       }
     ],
-    produks: [],
+    ukurans: [],
     snackbar: false,
     color: null,
     text: "",
     load: false,
     form: {
-      namaProduk: "",
-      harga: "",
-      stok: "",
-      jumlahMinimal: "",
-      gambar: "",
+      namaUkuran: "",
       idPegawaiLog: "Owner"
     },
-    produk: new FormData(),
+    ukuran: new FormData(),
     typeInput: "new",
     errors: ""
   }),
   methods: {
     getData() {
-      var uri = this.$apiUrl + "produk";
-      this.$http.get(uri, this.produk).then(response => {
-        this.produks = response.data.data;
+      var uri = this.$apiUrl + "ukuranHewan";
+      this.$http.get(uri, this.ukuran).then(response => {
+        this.ukurans = response.data.data;
       });
     },
 
     sendData() {
-      this.produk.append("namaProduk", this.form.namaProduk);
-      this.produk.append("harga", this.form.harga);
-      this.produk.append("stok", this.form.stok);
-      this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
-      this.produk.append("gambar", this.form.gambar);
-      this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
+      this.ukuran.append("namaUkuran", this.form.namaUkuran);
+      this.ukuran.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + "produk";
+      var uri = this.$apiUrl + "ukuranHewan";
       this.load = true;
       this.$http
-        .post(uri, this.produk)
+        .post(uri, this.ukuran)
         .then(response => {
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
@@ -223,26 +150,18 @@ export default {
     editHandler(item) {
       this.typeInput = "edit";
       this.dialog = true;
-      this.idProduk = item.idProduk;
-      this.form.namaProduk = item.namaProduk;
-      this.form.harga = item.harga;
-      this.form.stok = item.stok;
-      this.form.jumlahMinimal = item.jumlahMinimal;
-      this.form.gambar = item.gambar;
+      this.idUkuran = item.idUkuran;
+      this.form.namaUkuran = item.namaUkuran;
     },
 
     updateData() {
-      this.produk.append("namaProduk", this.form.namaProduk);
-      this.produk.append("harga", this.form.harga);
-      this.produk.append("stok", this.form.stok);
-      this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
-      this.produk.append("gambar", this.form.gambar);
-      this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
+      this.ukuran.append("namaUkuran", this.form.namaUkuran);
+      this.ukuran.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + `produk/update/${this.idProduk}`;
+      var uri = this.$apiUrl + `ukuranHewan/${this.idUkuran}`;
       this.load = true;
       this.$http
-        .post(uri, this.produk)
+        .post(uri, this.ukuran)
         .then(response => {
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
@@ -264,8 +183,8 @@ export default {
         });
     },
 
-    deleteData(idProduk) {
-      var uri = this.$apiUrl + "produk/" + idProduk; //data dihapus berdasarkan id
+    deleteData(idUkuran) {
+      var uri = this.$apiUrl + "ukuranHewan/" + idUkuran; //data dihapus berdasarkan id
       this.$http
         .delete(uri)
         .then(response => {
@@ -287,18 +206,13 @@ export default {
       if (this.typeInput === "new") {
         this.sendData();
       } else {
-        console.log("dddd");
         this.updateData();
       }
     },
 
     resetForm() {
       this.form = {
-        namaProduk: "",
-        harga: "",
-        stok: "",
-        jumlahMinimal: "",
-        gambar: "",
+        namaUkuran: "",
         idPegawaiLog: "Owner"
       };
     }

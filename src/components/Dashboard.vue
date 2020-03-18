@@ -78,6 +78,11 @@ export default {
           title: "Jenis Hewan",
           icon: "mdi-dog",
           to: "/jenisHewan"
+        },
+        {
+          title: "Ukuran Hewan",
+          icon: "mdi-dog",
+          to: "/ukuranHewan"
         }
       ]
     };

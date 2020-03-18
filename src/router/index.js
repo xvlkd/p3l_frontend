@@ -42,6 +42,11 @@ const routes = [{
             path: '/jenisHewan',
             component: loadDashboard('JenisHewan')
         },
+        {
+            name: 'Ukuran Hewan',
+            path: '/ukuranHewan',
+            component: loadDashboard('UkuranHewan')
+        },
     ]
 }, ]
 

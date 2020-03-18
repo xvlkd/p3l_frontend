@@ -96,7 +96,8 @@ export default {
       },
       {
         text: "Action",
-        value: null
+        value: null,
+        sortable: false
       }
     ],
     jenises: [],
