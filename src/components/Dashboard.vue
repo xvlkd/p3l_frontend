@@ -75,6 +75,11 @@ export default {
           to: "/Supplier"
         },
         {
+          title: "Hewan",
+          icon: "mdi-dog-service",
+          to: "/Hewan"
+        },
+        {
           title: "Jenis Hewan",
           icon: "mdi-dog",
           to: "/jenisHewan"

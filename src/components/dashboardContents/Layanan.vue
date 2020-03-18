@@ -157,7 +157,7 @@ export default {
 
     deleteData(idLayanan) {
       var uri = this.$apiUrl + "layanan/" + idLayanan; //data dihapus berdasarkan id
-      this.$http.delete(uri).then(this.getData(), this.resetForm(), this.load = false,);
+      this.$http.delete(uri, this.layanans).then(this.getData(), this.resetForm(), this.load = false,);
     },
 
     editHandler(item) {
@@ -176,6 +176,7 @@ export default {
         this.dialog = false;
       } else {
         this.updateData();
+        this.dialog = false;
       }
     },
 

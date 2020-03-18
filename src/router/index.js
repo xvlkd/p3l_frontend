@@ -38,6 +38,11 @@ const routes = [{
             component: loadDashboard('Supplier')
         },
         {
+            name: 'Hewan',
+            path: '/Hewan',
+            component: loadDashboard('Hewan')
+        },
+        {
             name: 'Jenis Hewan',
             path: '/jenisHewan',
             component: loadDashboard('JenisHewan')

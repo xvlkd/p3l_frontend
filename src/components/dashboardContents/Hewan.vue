@@ -1,8 +1,8 @@
 <template>
-  <v-data-table :headers="headers" :items="customers" :search="keyword" :loading="load">
+  <v-data-table :headers="headers" :items="hewans" :search="keyword" :loading="load">
     <template v-slot:top>
       <v-toolbar>
-        <v-toolbar-title>Data Customer</v-toolbar-title>
+        <v-toolbar-title>Data Hewan</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer />
         <v-flex xs5 class="text-right">
@@ -11,7 +11,7 @@
         <v-spacer />
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-btn rounded @click="dialog=true" color="green accent-3">
-          <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah Customer
+          <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah Hewan
         </v-btn>
       </v-toolbar>
 
@@ -23,17 +23,8 @@
                 <v-col cols="12">
                   <v-text-field
                     prepend-icon="mdi-rename-box"
-                    label="Nama Customer*"
-                    v-model="form.namaCustomer"
-                    required
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12">
-                  <v-text-field
-                    prepend-icon="mdi-map-marker"
-                    label="Alamat*"
-                    v-model="form.alamat"
+                    label="Nama hewan*"
+                    v-model="form.namaHewan"
                     required
                   ></v-text-field>
                 </v-col>
@@ -47,12 +38,21 @@
                     required
                   ></v-text-field>
                 </v-col>
+                
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-cat"
+                    label="ID Jenis*"
+                    v-model="form.idJenis"
+                    required
+                  ></v-text-field>
+                </v-col>
 
                 <v-col cols="12">
                   <v-text-field
-                    prepend-icon="mdi-cellphone"
-                    label="Nomor Handphone*"
-                    v-model="form.noHp"
+                    prepend-icon="mdi-account-box-multiple"
+                    label="ID Ukuran*"
+                    v-model="form.idCustomer"
                     required
                   ></v-text-field>
                 </v-col>
@@ -70,7 +70,7 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
-      <v-icon @click="deleteData(item.idCustomer)">mdi-delete</v-icon>
+      <v-icon @click="deleteData(item.idHewan)">mdi-delete</v-icon>
     </template>
   </v-data-table>
 </template>
@@ -83,24 +83,24 @@ export default {
     keyword: "",
     headers: [
       {
-        text: "ID Customer",
-        value: "idCustomer"
+        text: "ID hewan",
+        value: "idHewan"
       },
       {
-        text: "Nama Customer",
-        value: "namaCustomer"
-      },
-      {
-        text: "Alamat",
-        value: "alamat"
+        text: "Nama hewan",
+        value: "namaHewan"
       },
       {
         text: "Tanggal Lahir",
         value: "tglLahir"
       },
       {
-        text: "Nomor Handphone",
-        value: "noHp"
+        text: "ID Jenis",
+        value: "idJenis"
+      },
+      {
+        text: "ID Ukuran",
+        value: "idCustomer"
       },
       {
         text: "Ditambahkan Oleh",
@@ -112,63 +112,63 @@ export default {
         sortable: false
       }
     ],
-    customers: [],
+    hewans: [],
     form: {
-      namaCustomer: "",
-      alamat: "",
+      namaHewan: "",
       tglLahir: "",
-      noHp: "",
+      idJenis: "",
+      idCustomer: "",
       idPegawaiLog: "Owner"
     },
-    customer: new FormData(),
+    hewan: new FormData(),
     typeInput: "new"
   }),
 
   methods: {
     getData() {
-      var uri = this.$apiUrl + "customer";
-      this.$http.get(uri, this.customer).then(response => {
-        this.customers = response.data.data;
+      var uri = this.$apiUrl + "hewan";
+      this.$http.get(uri, this.hewan).then(response => {
+        this.hewans = response.data.data;
       });
     },
 
     sendData() {
-      this.customer.append("namaCustomer", this.form.namaCustomer);
-      this.customer.append("alamat", this.form.alamat);
-      this.customer.append("tglLahir", this.form.tglLahir);
-      this.customer.append("noHp", this.form.noHp);
-      this.customer.append("idPegawaiLog", this.form.idPegawaiLog);
+      this.hewan.append("namaHewan", this.form.namaHewan);
+      this.hewan.append("tglLahir", this.form.tglLahir);
+      this.hewan.append("idJenis", this.form.idJenis);
+      this.hewan.append("idCustomer", this.form.idCustomer);
+      this.hewan.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + "customer";
+      var uri = this.$apiUrl + "hewan";
       this.load = true;
-      this.$http.post(uri, this.customer).then(this.getData(), this.resetForm(), this.load = false);
+      this.$http.post(uri, this.hewan).then(this.getData(), this.resetForm(), this.load = false,);
     },
 
     updateData() {
-      this.customer.append("namaCustomer", this.form.namaCustomer);
-      this.customer.append("alamat", this.form.alamat);
-      this.customer.append("tglLahir", this.form.tglLahir);
-      this.customer.append("noHp", this.form.noHp);
-      this.customer.append("idPegawaiLog", this.form.idPegawaiLog);
+      this.hewan.append("namaHewan", this.form.namaHewan);
+      this.hewan.append("tglLahir", this.form.tglLahir);
+      this.hewan.append("idJenis", this.form.idJenis);
+      this.hewan.append("idCustomer", this.form.idCustomer);
+      this.hewan.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + "customer/" + this.idCustomer;
+      var uri = this.$apiUrl + "hewan/" + this.idHewan;
       this.load = true;
-      this.$http.post(uri, this.customer).then(this.getData(), this.resetForm(), this.load = false);
+      this.$http.post(uri, this.hewan).then(this.getData(), this.resetForm(), this.load = false,);
     },
 
-    deleteData(idCustomer) {
-      var uri = this.$apiUrl + "customer/" + idCustomer; //data dihapus berdasarkan id
-      this.$http.delete(uri, this.customers).then(this.getData(), this.resetForm(), this.load = false,);
+    deleteData(idHewan) {
+      var uri = this.$apiUrl + "hewan/" + idHewan; //data dihapus berdasarkan id
+      this.$http.delete(uri, this.hewans).then(this.getData(), this.resetForm(), this.load = false,);
     },
 
     editHandler(item) {
       this.typeInput = "edit";
       this.dialog = true;
-      this.idCustomer = item.idCustomer;
-      this.form.namaCustomer = item.namaCustomer;
-      this.form.alamat = item.alamat;
+      this.idHewan = item.idHewan;
+      this.form.namaHewan = item.namaHewan;
       this.form.tglLahir = item.tglLahir;
-      this.form.noHp = item.noHp;
+      this.form.idJenis = item.idJenis;
+      this.form.idCustomer = item.idCustomer;
     },
 
     setForm() {
@@ -183,10 +183,10 @@ export default {
 
     resetForm() {
       this.form = {
-        namaCustomer: "",
-        alamat: "",
+        namaHewan: "",
         tglLahir: "",
-        noHp: "",
+        idJenis: "",
+        idCustomer: "",
         idPegawaiLog: "Owner"
       };
     }
