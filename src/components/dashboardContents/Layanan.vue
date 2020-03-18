@@ -1,56 +1,75 @@
 <template>
-  <v-data-table :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
+  <v-data-table :headers="headers" :items="layanans" :search="keyword" :loading="load">
     <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title>My CRUD</v-toolbar-title>
+      <v-toolbar>
+        <v-toolbar-title>Data layanan</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <v-spacer />
+        <v-flex xs5 class="text-right">
+          <v-text-field v-model="keyword" append-icon="mdi-search" label="Search" hide-details></v-text-field>
+        </v-flex>
+        <v-spacer />
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-btn rounded @click="dialog=true" color="green accent-3">
+          <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah layanan
+        </v-btn>
       </v-toolbar>
+
+      <v-dialog v-model="dialog" presistent max-width="400">
+        <v-card>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-rename-box"
+                    label="Nama layanan*"
+                    v-model="form.namaLayanan"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-cash-usd"
+                    label="Harga*"
+                    v-model="form.harga"
+                    required
+                  ></v-text-field>
+                </v-col>
+                
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-cat"
+                    label="ID Jenis*"
+                    v-model="form.idJenis"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-format-size"
+                    label="ID Ukuran*"
+                    v-model="form.idUkuran"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>*indicates required field</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Cancel</v-btn>
+            <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+      <v-icon class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
+      <v-icon @click="deleteData(item.idLayanan)">mdi-delete</v-icon>
     </template>
   </v-data-table>
 </template>
@@ -59,157 +78,120 @@
 export default {
   data: () => ({
     dialog: false,
+    items: [],
+    keyword: "",
     headers: [
       {
-        text: "Dessert (100g serving)",
-        align: "start",
-        sortable: false,
-        value: "name"
+        text: "ID layanan",
+        value: "idLayanan"
       },
-      { text: "Calories", value: "calories" },
-      { text: "Fat (g)", value: "fat" },
-      { text: "Carbs (g)", value: "carbs" },
-      { text: "Protein (g)", value: "protein" },
-      { text: "Actions", value: "actions", sortable: false }
+      {
+        text: "Nama layanan",
+        value: "namaLayanan"
+      },
+      {
+        text: "Harga",
+        value: "harga"
+      },
+      {
+        text: "ID Jenis",
+        value: "idJenis"
+      },
+      {
+        text: "ID Ukuran",
+        value: "idUkuran"
+      },
+      {
+        text: "Ditambahkan Oleh",
+        value: "idPegawaiLog"
+      },
+      {
+        text: "Action",
+        value: "actions",
+        sortable: false
+      }
     ],
-    desserts: [],
-    editedIndex: -1,
-    editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+    layanans: [],
+    form: {
+      namaLayanan: "",
+      harga: "",
+      idJenis: "",
+      idUkuran: "",
+      idPegawaiLog: "Owner"
     },
-    defaultItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    }
+    layanan: new FormData(),
+    typeInput: "new"
   }),
 
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
-    }
-  },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
-    }
-  },
-
-  created() {
-    this.initialize();
-  },
-
   methods: {
-    initialize() {
-      this.desserts = [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7
-        }
-      ];
+    getData() {
+      var uri = this.$apiUrl + "layanan";
+      this.$http.get(uri, this.layanan).then(response => {
+        this.layanans = response.data.data;
+      });
     },
 
-    editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+    sendData() {
+      this.layanan.append("namaLayanan", this.form.namaLayanan);
+      this.layanan.append("harga", this.form.harga);
+      this.layanan.append("idJenis", this.form.idJenis);
+      this.layanan.append("idUkuran", this.form.idUkuran);
+      this.layanan.append("idPegawaiLog", this.form.idPegawaiLog);
+
+      var uri = this.$apiUrl + "layanan";
+      this.load = true;
+      this.$http.post(uri, this.layanan);
+    },
+
+    updateData() {
+      this.layanan.append("namaLayanan", this.form.namaLayanan);
+      this.layanan.append("harga", this.form.harga);
+      this.layanan.append("idJenis", this.form.idJenis);
+      this.layanan.append("idUkuran", this.form.idUkuran);
+      this.layanan.append("idPegawaiLog", this.form.idPegawaiLog);
+
+      var uri = this.$apiUrl + "layanan/" + this.idLayanan;
+      this.load = true;
+      this.$http.post(uri, this.layanan);
+    },
+
+    deleteData(idLayanan) {
+      var uri = this.$apiUrl + "layanan/" + idLayanan; //data dihapus berdasarkan id
+      this.$http.delete(uri);
+    },
+
+    editHandler(item) {
+      this.typeInput = "edit";
       this.dialog = true;
+      this.idLayanan = item.idLayanan;
+      this.form.namaLayanan = item.namaLayanan;
+      this.form.harga = item.harga;
+      this.form.idJenis = item.idJenis;
+      this.form.idUkuran = item.idUkuran;
     },
 
-    deleteItem(item) {
-      const index = this.desserts.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.desserts.splice(index, 1);
-    },
-
-    close() {
-      this.dialog = false;
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
-    },
-
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+    setForm() {
+      if (this.typeInput === "new") {
+        this.sendData();
+        this.dialog = false;
       } else {
-        this.desserts.push(this.editedItem);
+        this.updateData();
       }
-      this.close();
+    },
+
+    resetForm() {
+      this.form = {
+        namaLayanan: "",
+        harga: "",
+        idJenis: "",
+        idUkuran: "",
+        idPegawaiLog: "Owner"
+      };
     }
+  },
+
+  mounted() {
+    this.getData();
   }
 };
 </script>
