@@ -15,12 +15,12 @@
         </v-btn>
       </v-toolbar>
 
-      <v-dialog v-model="dialog" presistent max-width="400">
+      <v-dialog v-model="dialog" presistent max-width="600">
         <v-card>
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col cols="12">
+                <v-col cols="12" sm="6">
                   <v-text-field
                     prepend-icon="mdi-rename-box"
                     label="Nama Pegawai*"
@@ -29,7 +29,17 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12">
+                <v-col cols="12" sm="6">
+                  <v-select
+                      prepend-icon="mdi-account"
+                      :items="['Owner', 'Customer Service', 'Kasir']"
+                      label="Jabatan*"
+                      v-model="form.jabatan"
+                      required
+                    ></v-select>
+                </v-col>
+
+                <v-col cols="12" sm="6">
                   <v-text-field
                     prepend-icon="mdi-map-marker"
                     label="Alamat*"
@@ -38,7 +48,7 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12">
+                <v-col cols="12" sm="6">
                   <v-text-field
                     prepend-icon="mdi-calendar"
                     label="Tanggal Lahir*"
@@ -48,7 +58,7 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12">
+                <v-col cols="12" sm="6">
                   <v-text-field
                     prepend-icon="mdi-cellphone"
                     label="Nomor Handphone*"
@@ -56,6 +66,16 @@
                     required
                   ></v-text-field>
                 </v-col>
+
+                <v-col cols="12" sm="6">
+                <v-file-input
+                  label="Gambar Pegawai"
+                  accept="image/png, image/jpeg, image/bmp"
+                  prepend-icon="mdi-camera"
+                  v-model="form.gambar"
+                  required
+                ></v-file-input>
+              </v-col>
               </v-row>
             </v-container>
             <small>*indicates required field</small>
@@ -103,6 +123,10 @@ export default {
         value: "noHp"
       },
       {
+        text: "Jabatan",
+        value: "jabatan"
+      },
+      {
         text: "Ditambahkan Oleh",
         value: "idPegawaiLog"
       },
@@ -118,6 +142,8 @@ export default {
       alamat: "",
       tglLahir: "",
       noHp: "",
+      jabatan: "",
+      gambar: "",
       idPegawaiLog: "Owner"
     },
     pegawai: new FormData(),
@@ -137,6 +163,8 @@ export default {
       this.pegawai.append("alamat", this.form.alamat);
       this.pegawai.append("tglLahir", this.form.tglLahir);
       this.pegawai.append("noHp", this.form.noHp);
+      this.pegawai.append("jabatan", this.form.jabatan);
+      this.pegawai.append("gambar", this.form.gambar);
       this.pegawai.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "pegawai";
@@ -149,6 +177,8 @@ export default {
       this.pegawai.append("alamat", this.form.alamat);
       this.pegawai.append("tglLahir", this.form.tglLahir);
       this.pegawai.append("noHp", this.form.noHp);
+      this.pegawai.append("jabatan", this.form.jabatan);
+      this.pegawai.append("gambar", this.form.gambar);
       this.pegawai.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "pegawai/" + this.NIP;
@@ -169,6 +199,8 @@ export default {
       this.form.alamat = item.alamat;
       this.form.tglLahir = item.tglLahir;
       this.form.noHp = item.noHp;
+      this.form.jabatan = item.jabatan;
+      this.form.gambar = item.gambar;
     },
 
     setForm() {
@@ -187,6 +219,8 @@ export default {
         alamat: "",
         tglLahir: "",
         noHp: "",
+        jabatan: "",
+        gambar: "",
         idPegawaiLog: "Owner"
       };
     }
