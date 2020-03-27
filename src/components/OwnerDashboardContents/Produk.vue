@@ -104,6 +104,7 @@
                   prepend-icon="mdi-camera"
                   v-model="form.gambar"
                   required
+                  @change="onFileSelected"
                 ></v-file-input>
               </v-col>
             </v-row>
@@ -220,6 +221,11 @@ export default {
         });
     },
 
+    onFileSelected(event) {
+      console.log(event);
+      this.form.gambar = event.target.files[0];
+    },
+
     editHandler(item) {
       this.typeInput = "edit";
       this.dialog = true;
@@ -228,7 +234,7 @@ export default {
       this.form.harga = item.harga;
       this.form.stok = item.stok;
       this.form.jumlahMinimal = item.jumlahMinimal;
-      this.form.gambar = item.gambar;
+      this.form.gambar = this.onFileSelected;
     },
 
     updateData() {

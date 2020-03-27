@@ -54,11 +54,11 @@ export default {
           icon: "mdi-account-group",
           to: "/Pegawai"
         },
-        {
-          title: "Customer",
-          icon: "mdi-account-box-multiple",
-          to: "/Customer"
-        },
+        // {
+        //   title: "Customer",
+        //   icon: "mdi-account-box-multiple",
+        //   to: "/Customer"
+        // },
         {
           title: "Layanan",
           icon: "mdi-face-agent",
@@ -74,11 +74,11 @@ export default {
           icon: "mdi-truck-fast",
           to: "/Supplier"
         },
-        {
-          title: "Hewan",
-          icon: "mdi-dog-service",
-          to: "/Hewan"
-        },
+        // {
+        //   title: "Hewan",
+        //   icon: "mdi-dog-service",
+        //   to: "/Hewan"
+        // },
         {
           title: "Jenis Hewan",
           icon: "mdi-dog",
