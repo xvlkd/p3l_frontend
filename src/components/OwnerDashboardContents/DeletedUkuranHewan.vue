@@ -2,33 +2,9 @@
   <v-container>
     <v-card width="100%">
       <v-container grid-list-md mb-0>
-        <h2 class="text-md-center">Data Ukuran Hewan</h2>
-        <v-layout row wrap style="margin:10px">
-          <v-flex xs6>
-            <v-btn
-              depressed
-              dark
-              rounded
-              style="text-transform: none !important;"
-              color="green accent-3"
-              @click="dialog=true"
-              class="mr-4"
-            >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tambah Ukuran
-            </v-btn>
-
-            <v-btn
-              depressed
-              dark
-              rounded
-              style="text-transform: none !important;"
-              color="green accent-3"
-              @click="deletedUkuran()"
-            >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tampil Log Hapus
-            </v-btn>
-          </v-flex>
-          <v-flex xs6 class="text-right">
+        <h2 class="text-md-center">Log Hapus Ukuran Hewan</h2>
+        <v-layout row wrap align-end style="margin:10px">
+          <v-flex xs6 offset-xs9 align-end>
             <v-text-field v-model="keyword" append-icon="mdi-search" label="Search" hide-details></v-text-field>
           </v-flex>
         </v-layout>
@@ -61,21 +37,28 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field
+                <!-- <v-card-text
                   prepend-icon="mdi-rename-box"
                   label="Ukuran Hewan*"
                   v-model="form.namaUkuran"
-                  required
-                ></v-text-field>
+                ></v-card-text>-->
+                <v-list-item-content>
+                  <v-list-item-subtitle>ID Ukuran Hewan: {{ form.idUkuran }}</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Ukuran Hewan: {{ form.namaUkuran }}</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Dibuat Oleh: {{ form.idPegawaiLog }}</v-list-item-subtitle>
+                </v-list-item-content>
               </v-col>
             </v-row>
           </v-container>
-          <small>*indicates required field</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
+          <v-btn color="blue darken-1" text @click="setForm()">Restore</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -122,55 +105,28 @@ export default {
       idPegawaiLog: "Owner"
     },
     ukuran: new FormData(),
-    typeInput: "new",
     errors: ""
   }),
   methods: {
     getData() {
-      var uri = this.$apiUrl + "ukuranHewan";
+      var uri = this.$apiUrl + "ukuranHewan/softDelete";
       this.$http.get(uri, this.ukuran).then(response => {
         this.ukurans = response.data.data;
       });
     },
 
-    sendData() {
-      this.ukuran.append("namaUkuran", this.form.namaUkuran);
-      this.ukuran.append("idPegawaiLog", this.form.idPegawaiLog);
-
-      var uri = this.$apiUrl + "ukuranHewan";
-      this.load = true;
-      this.$http
-        .post(uri, this.ukuran)
-        .then(response => {
-          this.snackbar = true; //mengaktifkan snackbar
-          this.color = "green"; //memberi warna snackbar
-          this.text = response.data.message; //memasukkan pesan kesnackbar
-          this.load = false;
-          this.dialog = false;
-          this.getData(); //mengambil data
-          this.resetForm();
-        })
-        .catch(error => {
-          this.errors = error;
-          this.snackbar = true;
-          this.text = "Try Again";
-          this.color = "red";
-          this.load = false;
-        });
-    },
-
     editHandler(item) {
-      this.typeInput = "edit";
       this.dialog = true;
       this.idUkuran = item.idUkuran;
+      this.form.idUkuran = item.idUkuran;
       this.form.namaUkuran = item.namaUkuran;
     },
 
-    updateData() {
+    restoreData() {
       this.ukuran.append("namaUkuran", this.form.namaUkuran);
       this.ukuran.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + `ukuranHewan/${this.idUkuran}`;
+      var uri = this.$apiUrl + `ukuranHewan/${this.idUkuran}/restore`;
       this.load = true;
       this.$http
         .post(uri, this.ukuran)
@@ -182,7 +138,6 @@ export default {
           this.dialog = false;
           this.getData(); //mengambil data
           this.resetForm();
-          this.typeInput = "new";
         })
         .catch(error => {
           this.errors = error;
@@ -191,12 +146,11 @@ export default {
           this.color = "red";
           this.load = false;
           this.dialog = false;
-          this.typeInput = "new";
         });
     },
 
     deleteData(idUkuran) {
-      var uri = this.$apiUrl + "ukuranHewan/" + idUkuran; //data dihapus berdasarkan id
+      var uri = this.$apiUrl + "ukuranHewan/" + idUkuran + "/permanen"; //data dihapus berdasarkan id
       this.$http
         .delete(uri)
         .then(response => {
@@ -215,11 +169,7 @@ export default {
     },
 
     setForm() {
-      if (this.typeInput === "new") {
-        this.sendData();
-      } else {
-        this.updateData();
-      }
+      this.restoreData();
     },
 
     resetForm() {
@@ -227,10 +177,6 @@ export default {
         namaUkuran: "",
         idPegawaiLog: "Owner"
       };
-    },
-
-    deletedUkuran() {
-      this.$router.push({ name: "Deleted Ukuran Hewan" });
     }
   },
 

@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-const DashboardOwner = () => import('../components/OwnerDashboard.vue');
 const LoginPage = () => import('../components/LoginPage.vue');
+const DashboardOwner = () => import('../components/OwnerDashboard.vue');
+const DashboardCS = () => import('../components/CSDashboard.vue');
 
 function loadDashboard(view) {
 	return () => import(`../components/OwnerDashboardContents/${view}.vue`);
@@ -18,13 +19,17 @@ const routes = [
 	},
 
 	{
+		name: 'OwnerPage',
 		path: '/owner',
 		component: DashboardOwner,
 		children: [
 			{
 				name: 'Pegawai',
 				path: '/pegawai',
-				component: loadDashboard('Pegawai')
+				component: loadDashboard('Pegawai'),
+				meta: {
+					auth: true
+				}
 			},
 			// {
 			// 	name: 'Customer',
@@ -40,6 +45,11 @@ const routes = [
 				name: 'Produk',
 				path: '/produk',
 				component: loadDashboard('Produk')
+			},
+			{
+				name: 'Deleted Produk',
+				path: '/deleted-produk',
+				component: loadDashboard('DeletedProduk')
 			},
 			{
 				name: 'Supplier',
@@ -60,8 +70,19 @@ const routes = [
 				name: 'Ukuran Hewan',
 				path: '/ukuranHewan',
 				component: loadDashboard('UkuranHewan')
+			},
+			{
+				name: 'Deleted Ukuran Hewan',
+				path: '/deleted-ukuranHewan',
+				component: loadDashboard('DeletedUkuranHewan')
 			}
 		]
+	},
+
+	{
+		name: 'CSPage',
+		path: '/customerService',
+		component: DashboardCS
 	}
 ];
 

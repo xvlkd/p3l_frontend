@@ -2,34 +2,9 @@
   <v-container>
     <v-card width="100%">
       <v-container grid-list-md mb-0>
-        <h2 class="text-md-center">Data Produk</h2>
-        <v-layout row wrap style="margin:10px">
-          <v-flex xs6>
-            <v-btn
-              depressed
-              dark
-              rounded
-              style="text-transform: none !important;"
-              color="green accent-3"
-              @click="dialog=true"
-              class="mr-4"
-            >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tambah Produk
-            </v-btn>
-
-            <v-btn
-              depressed
-              dark
-              rounded
-              style="text-transform: none !important;"
-              color="green accent-3"
-              @click="deletedProduct()"
-            >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tampil Log Hapus
-            </v-btn>
-          </v-flex>
-
-          <v-flex xs6 class="text-right">
+        <h2 class="text-md-center">Log Hapus Produk</h2>
+        <v-layout row wrap align-end style="margin:10px">
+          <v-flex xs6 offset-xs9 align-end>
             <v-text-field v-model="keyword" append-icon="mdi-search" label="Search" hide-details></v-text-field>
           </v-flex>
         </v-layout>
@@ -46,72 +21,6 @@
         </v-data-table>
       </v-container>
     </v-card>
-
-    <v-dialog v-model="dialog" presistent max-width="400">
-      <v-card>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-rename-box"
-                  label="Nama Produk*"
-                  v-model="form.namaProduk"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-cash-usd"
-                  label="Harga Produk*"
-                  type="number"
-                  v-model="form.harga"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-earth-box"
-                  label="Stok*"
-                  type="number"
-                  v-model="form.stok"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-earth-box"
-                  label="Jumlah Minimal*"
-                  type="number"
-                  v-model="form.jumlahMinimal"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <v-file-input
-                  label="Gambar Produk"
-                  accept="image/png, image/jpeg, image/bmp"
-                  prepend-icon="mdi-camera"
-                  v-model="form.gambar"
-                  required
-                  @change="onFileSelected"
-                ></v-file-input>
-              </v-col>
-            </v-row>
-          </v-container>
-          <small>*indicates required field</small>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
       {{ text }}
@@ -179,7 +88,7 @@ export default {
   }),
   methods: {
     getData() {
-      var uri = this.$apiUrl + "produk";
+      var uri = this.$apiUrl + "produk/softDelete";
       this.$http.get(uri, this.produk).then(response => {
         this.produks = response.data.data;
       });
@@ -313,46 +222,3 @@ export default {
   }
 };
 </script>
-
-          <!-- <template v-slot:body="{ items }">
-            <tbody>
-              <v-tooltip right>
-                <tr v-for="item in items" :key="item.idProduk">
-                  <td>{{ item.idProduk }}</td>
-                  <td>{{ item.namaProduk }}</td>
-                  <td>
-                    <v-img
-                      :src="$apiUrl + 'produk/' + item.idProduk + '/gambar'"
-                      width="80"
-                      height="80"
-                    ></v-img>
-                  </td>
-                  <td>{{ item.harga }}</td>
-                  <td>{{ item.stok }}</td>
-                  <td>{{ item.jumlahMinimal }}</td>
-                  <td>
-                    {{ item.idPegawaiLog }}
-                    <span>lihat password</span>
-          </td>-->
-                   <!-- <td>
-                    <v-btn icon color="indigo" light @click="editHandler(item)">
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon color="error" light @click="deleteData(item.idProduk)">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                  </td>
-                </tr>
-              </v-tooltip>
-            </tbody>
-          </template>-->
-
-                    <!-- 
-          <template v-slot:item.idPegawaiLog="{ item }">
-            <v-tooltip right>
-              <template v-slot:activator="{ on }">
-                <v-chip dark v-on="on">{{ item.idPegawaiLog }}</v-chip>
-              </template>
-              <span></span>
-            </v-tooltip>
-          </template>-->

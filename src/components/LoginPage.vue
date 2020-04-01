@@ -11,25 +11,38 @@
 
               <v-card-text>
                 <v-form>
-                  <v-text-field label="NIP" name="NIP" prepend-icon="mdi-human-male" type="text" />
+                  <v-text-field
+                    label="NIP"
+                    prepend-icon="mdi-human-male"
+                    type="text"
+                    v-model="form.NIP"
+                    required
+                  />
 
                   <v-text-field
-                    id="kataSandi"
                     label="password"
-                    name="password"
                     prepend-icon="mdi-lock"
-                    type="password"
+                    v-model="form.kataSandi"
+                    required
+                    :append-icon="!value ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="value ? 'text' : 'password'"
+                    @click:append="value = !value"
                   />
                 </v-form>
               </v-card-text>
 
               <v-card-actions>
                 <v-spacer />
-                <v-btn color="primary">Login</v-btn>
+                <v-btn color="primary" @click="login()">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
+
+        <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
+          {{ text }}
+          <v-btn dark text @click="snackbar=false">Close</v-btn>
+        </v-snackbar>
       </v-container>
     </v-content>
   </v-app>
@@ -37,6 +50,45 @@
 
 <script>
 export default {
-  data: () => {}
+  data: () => ({
+    form: {
+      NIP: "",
+      kataSandi: ""
+    },
+    snackbar: false,
+    color: null,
+    text: "",
+    pegawais: [],
+    pegawai: new FormData(),
+    value: false
+  }),
+
+  methods: {
+    login() {
+      this.pegawai.append("NIP", this.form.NIP);
+      this.pegawai.append("kataSandi", this.form.kataSandi);
+      var uri = this.$apiUrl + "pegawai/login";
+      this.$http
+        .post(uri, this.pegawai)
+        .then(response => {
+          this.snackbar = true; //mengaktifkan snackbar
+          this.color = "green"; //memberi warna snackbar
+          this.text = response.data.message; //memasukkan pesan kesnackbar
+          if (this.form.NIP == "Owner") {
+            this.$router.push({ name: "OwnerPage" });
+          } else if (this.form.NIP.includes("CS")) {
+            this.$router.push({ name: "Layanan" });
+          } else {
+            this.$router.push({ name: "Pegawai" });
+          }
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+        });
+    }
+  }
 };
 </script>

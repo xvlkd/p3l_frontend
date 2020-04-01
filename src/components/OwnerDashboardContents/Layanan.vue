@@ -37,15 +37,6 @@
                     required
                   ></v-text-field>
                 </v-col>
-                
-                <v-col cols="12">
-                  <v-text-field
-                    prepend-icon="mdi-cat"
-                    label="ID Jenis*"
-                    v-model="form.idJenis"
-                    required
-                  ></v-text-field>
-                </v-col>
 
                 <v-col cols="12">
                   <v-text-field
@@ -94,10 +85,6 @@ export default {
         value: "harga"
       },
       {
-        text: "ID Jenis",
-        value: "idJenis"
-      },
-      {
         text: "ID Ukuran",
         value: "idUkuran"
       },
@@ -115,7 +102,6 @@ export default {
     form: {
       namaLayanan: "",
       harga: "",
-      idJenis: "",
       idUkuran: "",
       idPegawaiLog: "Owner"
     },
@@ -134,30 +120,34 @@ export default {
     sendData() {
       this.layanan.append("namaLayanan", this.form.namaLayanan);
       this.layanan.append("harga", this.form.harga);
-      this.layanan.append("idJenis", this.form.idJenis);
       this.layanan.append("idUkuran", this.form.idUkuran);
       this.layanan.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "layanan";
       this.load = true;
-      this.$http.post(uri, this.layanan).then(this.getData(), this.resetForm(), this.load = false,);
+      this.$http
+        .post(uri, this.layanan)
+        .then(this.getData(), this.resetForm(), (this.load = false));
     },
 
     updateData() {
       this.layanan.append("namaLayanan", this.form.namaLayanan);
       this.layanan.append("harga", this.form.harga);
-      this.layanan.append("idJenis", this.form.idJenis);
       this.layanan.append("idUkuran", this.form.idUkuran);
       this.layanan.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "layanan/" + this.idLayanan;
       this.load = true;
-      this.$http.post(uri, this.layanan).then(this.getData(), this.resetForm(), this.load = false,);
+      this.$http
+        .post(uri, this.layanan)
+        .then(this.getData(), this.resetForm(), (this.load = false));
     },
 
     deleteData(idLayanan) {
       var uri = this.$apiUrl + "layanan/" + idLayanan; //data dihapus berdasarkan id
-      this.$http.delete(uri, this.layanans).then(this.getData(), this.resetForm(), this.load = false,);
+      this.$http
+        .delete(uri, this.layanans)
+        .then(this.getData(), this.resetForm(), (this.load = false));
     },
 
     editHandler(item) {
@@ -166,7 +156,6 @@ export default {
       this.idLayanan = item.idLayanan;
       this.form.namaLayanan = item.namaLayanan;
       this.form.harga = item.harga;
-      this.form.idJenis = item.idJenis;
       this.form.idUkuran = item.idUkuran;
     },
 
@@ -184,7 +173,6 @@ export default {
       this.form = {
         namaLayanan: "",
         harga: "",
-        idJenis: "",
         idUkuran: "",
         idPegawaiLog: "Owner"
       };
