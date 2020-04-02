@@ -2,18 +2,23 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 const LoginPage = () => import('../components/LoginPage.vue');
+
 const DashboardOwner = () => import('../components/OwnerDashboard.vue');
 const DashboardCS = () => import('../components/CSDashboard.vue');
+const DashboardKasir = () => import('../components/KasirDashboard.vue');
 
-function loadDashboard(view) {
+function loadDashboardOWner(view) {
 	return () => import(`../components/OwnerDashboardContents/${view}.vue`);
+}
+
+function loadDashboardCS(view) {
+	return () => import(`../components/CSDashboardContents/${view}.vue`);
 }
 
 Vue.use(Router);
 
-const routes = [
-	{
-		name: 'landingPage',
+const routes = [{
+		name: 'Login Page',
 		path: '/',
 		component: LoginPage
 	},
@@ -22,67 +27,70 @@ const routes = [
 		name: 'OwnerPage',
 		path: '/owner',
 		component: DashboardOwner,
-		children: [
-			{
+		children: [{
 				name: 'Pegawai',
 				path: '/pegawai',
-				component: loadDashboard('Pegawai'),
+				component: loadDashboardOWner('Pegawai'),
 				meta: {
 					auth: true
 				}
 			},
-			// {
-			// 	name: 'Customer',
-			// 	path: '/customer',
-			// 	component: loadDashboard('Customer')
-			// },
 			{
 				name: 'Layanan',
 				path: '/layanan',
-				component: loadDashboard('Layanan')
+				component: loadDashboardOWner('Layanan')
 			},
 			{
 				name: 'Produk',
 				path: '/produk',
-				component: loadDashboard('Produk')
+				component: loadDashboardOWner('Produk')
 			},
 			{
 				name: 'Deleted Produk',
 				path: '/deleted-produk',
-				component: loadDashboard('DeletedProduk')
+				component: loadDashboardOWner('DeletedProduk')
 			},
 			{
 				name: 'Supplier',
 				path: '/supplier',
-				component: loadDashboard('Supplier')
+				component: loadDashboardOWner('Supplier')
 			},
-			// {
-			// 	name: 'Hewan',
-			// 	path: '/hewan',
-			// 	component: loadDashboard('Hewan')
-			// },
+
 			{
 				name: 'Jenis Hewan',
 				path: '/jenisHewan',
-				component: loadDashboard('JenisHewan')
+				component: loadDashboardOWner('JenisHewan')
 			},
 			{
 				name: 'Ukuran Hewan',
 				path: '/ukuranHewan',
-				component: loadDashboard('UkuranHewan')
+				component: loadDashboardOWner('UkuranHewan')
 			},
-			{
-				name: 'Deleted Ukuran Hewan',
-				path: '/deleted-ukuranHewan',
-				component: loadDashboard('DeletedUkuranHewan')
-			}
 		]
 	},
 
 	{
 		name: 'CSPage',
 		path: '/customerService',
-		component: DashboardCS
+		component: DashboardCS,
+		children: [{
+				name: 'Customer',
+				path: '/customer',
+				component: loadDashboardCS('Customer')
+			},
+			{
+				name: 'Hewan',
+				path: '/hewan',
+				component: loadDashboardCS('Hewan')
+			},
+		]
+	},
+
+	{
+		name: 'KasirPage',
+		path: '/kasir',
+		component: DashboardKasir,
+
 	}
 ];
 

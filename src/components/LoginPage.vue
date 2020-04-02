@@ -77,10 +77,11 @@ export default {
           if (this.form.NIP == "Owner") {
             this.$router.push({ name: "OwnerPage" });
           } else if (this.form.NIP.includes("CS")) {
-            this.$router.push({ name: "Layanan" });
+            this.$router.push({ name: "CSPage" });
           } else {
-            this.$router.push({ name: "Pegawai" });
+            this.$router.push({ name: "KasirPage" });
           }
+          localStorage.setItem("NIP", this.form.NIP);
         })
         .catch(error => {
           this.errors = error;

@@ -1,5 +1,5 @@
 <template>
-  <v-slot>
+  <v-container>
     <v-card width="100%">
       <v-container grid-list-md mb-0>
         <h2 class="text-md-center">Data Supplier</h2>
@@ -33,7 +33,7 @@
                   <v-btn icon color="indigo" light @click="editHandler(item)">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
-                  <v-btn icon color="error" light @click="deleteData(item.NIP)">
+                  <v-btn icon color="error" light @click="deleteData(item.idSupplier)">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </td>
@@ -43,11 +43,56 @@
         </v-data-table>
       </v-container>
     </v-card>
+
+    <v-dialog v-model="dialog" presistent max-width="400">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  prepend-icon="mdi-rename-box"
+                  label="Nama Supplier*"
+                  v-model="form.namaSupplier"
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-text-field
+                  prepend-icon="mdi-cash-usd"
+                  label="Alamat*"
+                  v-model="form.alamat"
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-text-field
+                  prepend-icon="mdi-earth-box"
+                  label="Nomor Handphone*"
+                  type="number"
+                  v-model="form.noHp"
+                  required
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
       {{ text }}
       <v-btn dark text @click="snackbar=false">Close</v-btn>
     </v-snackbar>
-  </v-slot>
+  </v-container>
 </template>
 <script>
 export default {
@@ -82,7 +127,16 @@ export default {
     snackbar: false,
     color: null,
     text: "",
-    load: false
+    load: false,
+    form: {
+      namaSupplier: "",
+      alamat: "",
+      noHp: "",
+      idPegawaiLog: "Owner"
+    },
+    supplier: new FormData(),
+    typeInput: "new",
+    errors: ""
   }),
   methods: {
     getData() {
@@ -90,6 +144,110 @@ export default {
       this.$http.get(uri, this.suppliers).then(response => {
         this.suppliers = response.data.data;
       });
+    },
+
+    sendData() {
+      this.supplier.append("namaSupplier", this.form.namaSupplier);
+      this.supplier.append("alamat", this.form.alamat);
+      this.supplier.append("noHp", this.form.noHp);
+      this.supplier.append("idPegawaiLog", this.form.idPegawaiLog);
+
+      var uri = this.$apiUrl + "supplier";
+      this.load = true;
+      this.$http
+        .post(uri, this.supplier)
+        .then(response => {
+          this.snackbar = true; //mengaktifkan snackbar
+          this.color = "green"; //memberi warna snackbar
+          this.text = response.data.message; //memasukkan pesan kesnackbar
+          this.load = false;
+          this.dialog = false;
+          this.getData(); //mengambil data
+          this.resetForm();
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+          this.load = false;
+        });
+    },
+
+    editHandler(item) {
+      this.typeInput = "edit";
+      this.dialog = true;
+      this.idSupplier = item.idSupplier;
+      this.form.namaSupplier = item.namaSupplier;
+      this.form.alamat = item.alamat;
+      this.form.noHp = item.noHp;
+    },
+
+    updateData() {
+      this.supplier.append("namaSupplier", this.form.namaSupplier);
+      this.supplier.append("alamat", this.form.alamat);
+      this.supplier.append("noHp", this.form.noHp);
+      this.supplier.append("idPegawaiLog", this.form.idPegawaiLog);
+
+      var uri = this.$apiUrl + `supplier/${this.idSupplier}`;
+      this.load = true;
+      this.$http
+        .post(uri, this.supplier)
+        .then(response => {
+          this.snackbar = true; //mengaktifkan snackbar
+          this.color = "green"; //memberi warna snackbar
+          this.text = response.data.message; //memasukkan pesan ke snackbar
+          this.load = false;
+          this.dialog = false;
+          this.getData(); //mengambil data
+          this.resetForm();
+          this.typeInput = "new";
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+          this.load = false;
+          this.dialog = false;
+          this.typeInput = "new";
+        });
+    },
+
+    deleteData(idSupplier) {
+      var uri = this.$apiUrl + "supplier/" + idSupplier; //data dihapus berdasarkan id
+      this.$http
+        .delete(uri)
+        .then(response => {
+          this.snackbar = true;
+          this.text = response.data.message;
+          this.color = "green";
+          this.deleteDialog = false;
+          this.getData();
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+        });
+    },
+
+    setForm() {
+      if (this.typeInput === "new") {
+        this.sendData();
+      } else {
+        this.updateData();
+      }
+    },
+
+    resetForm() {
+      this.form = {
+        namaSupplier: "",
+        alamat: "",
+        noHp: "",
+        idPegawaiLog: "Owner"
+      };
     }
   },
 

@@ -12,8 +12,20 @@
               style="text-transform: none !important;"
               color="green accent-3"
               @click="dialog=true"
+              class="mr-4"
             >
               <v-icon size="18" class="mr-2">mdi-pencil-plus</v-icon>Tambah Jenis Hewan
+            </v-btn>
+
+            <v-btn
+              depressed
+              dark
+              rounded
+              style="text-transform: none !important;"
+              color="green accent-3"
+              @click="deletedJenis()"
+            >
+              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tampil Log Hapus
             </v-btn>
           </v-flex>
           <v-flex xs6 class="text-right">
@@ -215,6 +227,10 @@ export default {
         namaJenis: "",
         idPegawaiLog: "Owner"
       };
+    },
+
+    deletedJenis() {
+      this.$router.push({ name: "Deleted Jenis Hewan" });
     }
   },
 

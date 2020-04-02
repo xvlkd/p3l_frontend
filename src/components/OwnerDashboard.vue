@@ -7,7 +7,7 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>Mbah Buana</v-list-item-title>
+          <v-list-item-title>{{nip}}</v-list-item-title>
           <v-list-item-subtitle>Logged In</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -45,52 +45,57 @@
 
 <script>
 export default {
-  data() {
-    return {
-      drawer: null,
-      items: [
-        {
-          title: "Pegawai",
-          icon: "mdi-account-group",
-          to: "/Pegawai"
-        },
-        // {
-        //   title: "Customer",
-        //   icon: "mdi-account-box-multiple",
-        //   to: "/Customer"
-        // },
-        {
-          title: "Layanan",
-          icon: "mdi-face-agent",
-          to: "/Layanan"
-        },
-        {
-          title: "Produk",
-          icon: "mdi-package-variant-closed",
-          to: "/Produk"
-        },
-        {
-          title: "Supplier",
-          icon: "mdi-truck-fast",
-          to: "/Supplier"
-        },
-        // {
-        //   title: "Hewan",
-        //   icon: "mdi-dog-service",
-        //   to: "/Hewan"
-        // },
-        {
-          title: "Jenis Hewan",
-          icon: "mdi-dog",
-          to: "/jenisHewan"
-        },
-        {
-          title: "Ukuran Hewan",
-          icon: "mdi-size-xxl",
-          to: "/ukuranHewan"
-        }
-      ]
-    };
+  data: () => ({
+    drawer: null,
+    items: [
+      {
+        title: "Pegawai",
+        icon: "mdi-account-group",
+        to: "/Pegawai"
+      },
+      // {
+      //   title: "Customer",
+      //   icon: "mdi-account-box-multiple",
+      //   to: "/Customer"
+      // },
+      {
+        title: "Layanan",
+        icon: "mdi-face-agent",
+        to: "/Layanan"
+      },
+      {
+        title: "Produk",
+        icon: "mdi-package-variant-closed",
+        to: "/Produk"
+      },
+      {
+        title: "Supplier",
+        icon: "mdi-truck-fast",
+        to: "/Supplier"
+      },
+      // {
+      //   title: "Hewan",
+      //   icon: "mdi-dog-service",
+      //   to: "/Hewan"
+      // },
+      {
+        title: "Jenis Hewan",
+        icon: "mdi-dog",
+        to: "/jenisHewan"
+      },
+      {
+        title: "Ukuran Hewan",
+        icon: "mdi-size-xxl",
+        to: "/ukuranHewan"
+      }
+    ],
+    nip: localStorage.getItem("NIP")
+  }),
+  methods: {
+    logout() {
+      this.$router.push({ name: "Login Page" });
+      localStorage.removeItem("NIP");
+    }
   }
 };
 </script>

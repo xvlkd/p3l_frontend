@@ -2,7 +2,7 @@
   <v-container>
     <v-card width="100%">
       <v-container grid-list-md mb-0>
-        <h2 class="text-md-center">Data Produk</h2>
+        <h2 class="text-md-center">{{this.judul}}</h2>
         <v-layout row wrap style="margin:10px">
           <v-flex xs6>
             <v-btn
@@ -25,7 +25,8 @@
               color="green accent-3"
               @click="deletedProduct()"
             >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tampil Log Hapus
+              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>
+              {{this.namaBtn}}
             </v-btn>
           </v-flex>
 
@@ -175,13 +176,25 @@ export default {
     },
     produk: new FormData(),
     typeInput: "new",
-    errors: ""
+    errors: "",
+    status: 1,
+    judul: "Data Produk",
+    namaBtn: "Tampil Log Hapus"
   }),
   methods: {
     getData() {
-      var uri = this.$apiUrl + "produk";
+      if (status == 0) {
+        var uri = this.$apiUrl + "produk";
+        this.$http.get(uri, this.produk).then(response => {
+          this.produks = response.data.data;
+        });
+      }
+    },
+
+    getDataSoftDelete() {
+      var uri = this.$apiUrl + "produk/softDelete";
       this.$http.get(uri, this.produk).then(response => {
-        this.produks = response.data.data;
+        this.produks = response.data.dataProduk;
       });
     },
 
@@ -304,7 +317,17 @@ export default {
     },
 
     deletedProduct() {
-      this.$router.push({ name: "Deleted Produk" });
+      if (this.status == 0) {
+        this.getData();
+        this.status = 1;
+        this.judul = "Data Produk";
+        this.namaBtn = "Tampil Log Hapus";
+      } else {
+        this.getDataSoftDelete();
+        this.status = 0;
+        this.judul = "Data Produk Yang Dihapus";
+        this.namaBtn = "Tampil Produk";
+      }
     }
   },
 
