@@ -2,7 +2,7 @@
   <v-container>
     <v-card width="100%">
       <v-container grid-list-md mb-0>
-        <h2 class="text-md-center">Data Ukuran Hewan</h2>
+        <h2 class="text-md-center">{{this.judul}}</h2>
         <v-layout row wrap style="margin:10px">
           <v-flex xs6>
             <v-btn
@@ -13,6 +13,7 @@
               color="green accent-3"
               @click="dialog=true"
               class="mr-4"
+              v-if="status === 1"
             >
               <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tambah Ukuran
             </v-btn>
@@ -23,9 +24,10 @@
               rounded
               style="text-transform: none !important;"
               color="green accent-3"
-              @click="deletedUkuran()"
+              @click="deletedData()"
             >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tampil Log Hapus
+              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>
+              {{this.btnLog}}
             </v-btn>
           </v-flex>
           <v-flex xs6 class="text-right">
@@ -55,27 +57,26 @@
       </v-container>
     </v-card>
 
-    <v-dialog v-model="dialog" presistent max-width="400">
+    <v-dialog v-model="dialogSoftDelete" presistent max-width="400">
       <v-card>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-rename-box"
-                  label="Ukuran Hewan*"
-                  v-model="form.namaUkuran"
-                  required
-                ></v-text-field>
+                <v-list-item-content>
+                  <v-list-item-subtitle>ID Ukuran Hewan: {{ form.idUkuran }}</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Nama Ukuran Hewan: {{ form.namaUkuran }}</v-list-item-subtitle>
+                </v-list-item-content>
               </v-col>
             </v-row>
           </v-container>
-          <small>*indicates required field</small>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
+          <v-btn color="blue darken-1" text @click="restore()">{{this.btnDialog}}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -123,11 +124,23 @@ export default {
     },
     ukuran: new FormData(),
     typeInput: "new",
-    errors: ""
+    errors: "",
+    status: 1,
+    judul: "Data Ukuran Hewan",
+    btnLog: "Tampil Log Hapus",
+    btnDialog: "Save",
+    dialogSoftDelete: false
   }),
   methods: {
     getData() {
       var uri = this.$apiUrl + "ukuranHewan";
+      this.$http.get(uri, this.ukuran).then(response => {
+        this.ukurans = response.data.data;
+      });
+    },
+
+    getDataSoftDelete() {
+      var uri = this.$apiUrl + "ukuranHewan/softDelete";
       this.$http.get(uri, this.ukuran).then(response => {
         this.ukurans = response.data.data;
       });
@@ -160,10 +173,19 @@ export default {
     },
 
     editHandler(item) {
-      this.typeInput = "edit";
-      this.dialog = true;
-      this.idUkuran = item.idUkuran;
-      this.form.namaUkuran = item.namaUkuran;
+      if (status == 1) {
+        this.typeInput = "edit";
+        this.dialog = true;
+        this.idUkuran = item.idUkuran;
+        this.form.namaUkuran = item.namaUkuran;
+        this.form.idPegawaiLog = item.idPegawaiLog;
+      } else {
+        this.dialogSoftDelete = true;
+        this.idUkuran = item.idUkuran;
+        this.form.idUkuran = item.idUkuran;
+        this.form.namaUkuran = item.namaUkuran;
+        this.form.idPegawaiLog = item.idPegawaiLog;
+      }
     },
 
     updateData() {
@@ -196,7 +218,13 @@ export default {
     },
 
     deleteData(idUkuran) {
-      var uri = this.$apiUrl + "ukuranHewan/" + idUkuran; //data dihapus berdasarkan id
+      var uri;
+
+      if (this.status == 1) {
+        uri = this.$apiUrl + "ukuranHewan/" + idUkuran; //data dihapus berdasarkan id
+      } else {
+        uri = this.$apiUrl + "ukuranHewan/" + idUkuran + "/permanen";
+      }
       this.$http
         .delete(uri)
         .then(response => {
@@ -204,7 +232,11 @@ export default {
           this.text = response.data.message;
           this.color = "green";
           this.dialog = false;
-          this.getData();
+          if (this.status == 1) {
+            this.getData();
+          } else {
+            this.getDataSoftDelete();
+          }
         })
         .catch(error => {
           this.errors = error;
@@ -217,6 +249,8 @@ export default {
     setForm() {
       if (this.typeInput === "new") {
         this.sendData();
+      } else if (this.status == 1) {
+        this.restore();
       } else {
         this.updateData();
       }
@@ -229,8 +263,51 @@ export default {
       };
     },
 
-    deletedUkuran() {
-      this.$router.push({ name: "Deleted Ukuran Hewan" });
+    deletedData() {
+      if (this.status == 0) {
+        this.getData();
+        this.status = 1;
+        this.judul = "Data Ukuran Hewan";
+        this.btnLog = "Tampil Log Hapus";
+        this.btnDialog = "Save";
+      } else {
+        this.getDataSoftDelete();
+        this.status = 0;
+        this.judul = "Data Ukuran Hewan Yang Dihapus";
+        this.btnLog = "Tampil Ukuran Hewan";
+        this.btnDialog = "Restore";
+      }
+    },
+
+    restore() {
+      this.ukuran.append("namaUkuran", this.form.namaUkuran);
+      this.ukuran.append("idPegawaiLog", "Owner");
+
+      var uri = this.$apiUrl + `ukuranHewan/${this.idUkuran}/restore`;
+
+      this.load = true;
+      this.$http
+        .post(uri, this.ukuran)
+        .then(response => {
+          this.snackbar = true; //mengaktifkan snackbar
+          this.color = "green"; //memberi warna snackbar
+          this.text = response.data.message; //memasukkan pesan ke snackbar
+          this.load = false;
+          this.dialogSoftDelete = false;
+          if (this.status == 0) {
+            this.getDataSoftDelete();
+          } else {
+            this.getData();
+          }
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+          this.load = false;
+          this.dialogSoftDelete = false;
+        });
     }
   },
 

@@ -2,7 +2,7 @@
   <v-container>
     <v-card width="100%">
       <v-container grid-list-md mb-0>
-        <h2 class="text-md-center">Data Jenis Hewan</h2>
+        <h2 class="text-md-center">{{this.judul}}</h2>
         <v-layout row wrap style="margin:10px">
           <v-flex xs6>
             <v-btn
@@ -13,6 +13,7 @@
               color="green accent-3"
               @click="dialog=true"
               class="mr-4"
+              v-if="status === 1"
             >
               <v-icon size="18" class="mr-2">mdi-pencil-plus</v-icon>Tambah Jenis Hewan
             </v-btn>
@@ -23,9 +24,10 @@
               rounded
               style="text-transform: none !important;"
               color="green accent-3"
-              @click="deletedJenis()"
+              @click="deletedData()"
             >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tampil Log Hapus
+              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>
+              {{this.btnLog}}
             </v-btn>
           </v-flex>
           <v-flex xs6 class="text-right">
@@ -80,6 +82,30 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="dialogSoftDelete" presistent max-width="400">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-list-item-content>
+                  <v-list-item-subtitle>ID Jenis Hewan: {{ form.idJenis }}</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-content>
+                  <v-list-item-subtitle>Nama Jenis Hewan: {{ form.namaJenis }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="dialogSoftDelete=false, resetForm()">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="restore()">{{this.btnDialog}}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
       {{ text }}
       <v-btn dark text @click="snackbar=false">Close</v-btn>
@@ -123,11 +149,23 @@ export default {
     },
     jenis: new FormData(),
     typeInput: "new",
-    errors: ""
+    errors: "",
+    status: 1,
+    judul: "Data Jenis Hewan",
+    btnLog: "Tampil Log Hapus",
+    btnDialog: "Save",
+    dialogSoftDelete: false
   }),
   methods: {
     getData() {
       var uri = this.$apiUrl + "jenisHewan";
+      this.$http.get(uri, this.jenis).then(response => {
+        this.jenises = response.data.data;
+      });
+    },
+
+    getDataSoftDelete() {
+      var uri = this.$apiUrl + "jenisHewan/softDelete";
       this.$http.get(uri, this.jenis).then(response => {
         this.jenises = response.data.data;
       });
@@ -160,19 +198,27 @@ export default {
     },
 
     editHandler(item) {
-      this.typeInput = "edit";
-      this.dialog = true;
-      this.idJenis = item.idJenis;
-      this.form.namaJenis = item.namaJenis;
+      if (this.status == 1) {
+        this.typeInput = "edit";
+        this.dialog = true;
+        this.idJenis = item.idJenis;
+        this.form.namaJenis = item.namaJenis;
+      } else {
+        this.dialogSoftDelete = true;
+        this.idJenis = item.idJenis;
+        this.form.idJenis = item.idJenis;
+        this.form.namaJenis = item.namaJenis;
+      }
     },
 
     updateData() {
       this.jenis.append("namaJenis", this.form.namaJenis);
+      this.jenis.append("idPegawaiLog", "Owner");
 
       var uri = this.$apiUrl + `jenisHewan/${this.idJenis}`;
       this.load = true;
       this.$http
-        .put(uri, this.jenis)
+        .post(uri, this.jenis)
         .then(response => {
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
@@ -195,7 +241,12 @@ export default {
     },
 
     deleteData(idJenis) {
-      var uri = this.$apiUrl + "jenisHewan/" + idJenis; //data dihapus berdasarkan id
+      var uri;
+      if (this.status == 1) {
+        uri = this.$apiUrl + "jenisHewan/" + idJenis; //data dihapus berdasarkan id
+      } else {
+        uri = this.$apiUrl + "jenisHewan/" + idJenis + "/permanen";
+      }
       this.$http
         .delete(uri)
         .then(response => {
@@ -203,7 +254,11 @@ export default {
           this.text = response.data.message;
           this.color = "green";
           this.deleteDialog = false;
-          this.getData();
+          if (this.status == 1) {
+            this.getData();
+          } else {
+            this.getDataSoftDelete();
+          }
         })
         .catch(error => {
           this.errors = error;
@@ -216,6 +271,8 @@ export default {
     setForm() {
       if (this.typeInput === "new") {
         this.sendData();
+      } else if (this.status == 0) {
+        this.restore();
       } else {
         console.log("dddd");
         this.updateData();
@@ -229,8 +286,51 @@ export default {
       };
     },
 
-    deletedJenis() {
-      this.$router.push({ name: "Deleted Jenis Hewan" });
+    deletedData() {
+      if (this.status == 0) {
+        this.getData();
+        this.status = 1;
+        this.judul = "Data Jenis Hewan";
+        this.btnLog = "Tampil Log Hapus";
+        this.btnDialog = "Save";
+      } else {
+        this.getDataSoftDelete();
+        this.status = 0;
+        this.judul = "Data Jenis Hewan Yang Dihapus";
+        this.btnLog = "Tampil Jenis Hewan";
+        this.btnDialog = "Restore";
+      }
+    },
+
+    restore() {
+      this.jenis.append("namaJenis", this.form.namaJenis);
+      this.jenis.append("idPegawaiLog", "Owner");
+
+      var uri = this.$apiUrl + `jenisHewan/${this.idJenis}/restore`;
+
+      this.load = true;
+      this.$http
+        .post(uri, this.jenis)
+        .then(response => {
+          this.snackbar = true; //mengaktifkan snackbar
+          this.color = "green"; //memberi warna snackbar
+          this.text = response.data.message; //memasukkan pesan ke snackbar
+          this.load = false;
+          this.dialogSoftDelete = false;
+          if (this.status == 0) {
+            this.getDataSoftDelete();
+          } else {
+            this.getData();
+          }
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+          this.load = false;
+          this.dialogSoftDelete = false;
+        });
     }
   },
 
