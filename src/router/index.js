@@ -24,44 +24,134 @@ const routes = [{
 	},
 
 	{
+		beforeEnter: (to, from, next) => {
+			if (sessionStorage.getItem("NIP") == "Owner") {
+				next();
+			} else {
+				sessionStorage.removeItem("NIP");
+				sessionStorage.removeItem("Nama")
+				next({
+					path: "/"
+				});
+			}
+		},
 		name: 'OwnerPage',
 		path: '/owner',
 		component: DashboardOwner,
 		children: [{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama")
+						next({
+							path: "/"
+						});
+					}
+				},
 				name: 'Pegawai',
 				path: '/pegawai',
 				component: loadDashboardOWner('Pegawai'),
-				meta: {
-					auth: true
-				}
 			},
+
 			{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama")
+						next({
+							path: "/"
+						});
+					}
+				},
 				name: 'Layanan',
 				path: '/layanan',
 				component: loadDashboardOWner('Layanan')
 			},
+
 			{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama")
+						next({
+							path: "/"
+						});
+					}
+				},
 				name: 'Produk',
 				path: '/produk',
 				component: loadDashboardOWner('Produk')
 			},
+
 			{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama")
+						next({
+							path: "/"
+						});
+					}
+				},
 				name: 'Deleted Produk',
 				path: '/deleted-produk',
 				component: loadDashboardOWner('DeletedProduk')
 			},
+
 			{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama")
+						next({
+							path: "/"
+						});
+					}
+				},
 				name: 'Supplier',
 				path: '/supplier',
 				component: loadDashboardOWner('Supplier')
 			},
 
 			{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama")
+						next({
+							path: "/"
+						});
+					}
+				},
 				name: 'Jenis Hewan',
 				path: '/jenisHewan',
 				component: loadDashboardOWner('JenisHewan')
 			},
+
 			{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama")
+						next({
+							path: "/"
+						});
+					}
+				},
 				name: 'Ukuran Hewan',
 				path: '/ukuranHewan',
 				component: loadDashboardOWner('UkuranHewan')

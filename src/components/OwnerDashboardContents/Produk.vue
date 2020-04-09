@@ -100,6 +100,7 @@
                   prepend-icon="mdi-camera"
                   v-model="form.gambar"
                   required
+                  @change="onFileSelected"
                 ></v-file-input>
               </v-col>
             </v-row>
@@ -215,7 +216,9 @@ export default {
     namaBtn: "Tampil Log Hapus",
     btn: "Save",
     dialogSoftDelete: false,
-    konfirmasi: false
+    konfirmasi: false,
+    valid: true,
+    namaRule: [v => !!v || "Nama tidak boleh kosong!"]
   }),
   methods: {
     getData() {
@@ -264,6 +267,10 @@ export default {
         });
     },
 
+    onFileSelected(item) {
+      return require(this.$apiUrl + `produk/${item.idProduk}/gambar`);
+    },
+
     editHandler(item) {
       if (this.status == 1) {
         this.typeInput = "edit";
@@ -273,7 +280,7 @@ export default {
         this.form.harga = item.harga;
         this.form.stok = item.stok;
         this.form.jumlahMinimal = item.jumlahMinimal;
-        // this.form.gambar = this.onFileSelected;
+        this.form.gambar = this.onFileSelected;
       } else {
         this.dialogSoftDelete = true;
         this.idProduk = item.idProduk;

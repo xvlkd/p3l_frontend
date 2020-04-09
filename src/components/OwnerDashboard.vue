@@ -3,11 +3,12 @@
     <v-navigation-drawer v-model="drawer" class="greydarken-3" dark app clipped fixed temporary>
       <v-list-item two-line>
         <v-list-item-avatar>
-          <img src="https://randomuser.me/api/portraits/women/81.jpg" />
+          <v-img :src="$apiUrl + `pegawai/${nip}/gambar`"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
           <v-list-item-title>{{nip}}</v-list-item-title>
+          <v-list-item-subtitle>{{jabatan}}</v-list-item-subtitle>
           <v-list-item-subtitle>Logged In</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -24,17 +25,29 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <template v-slot:append>
+      <!-- <template v-slot:append>
         <div class="pa-2">
-          <v-btn block @click="logout()">Logout</v-btn>
+          <v-btn block >Logout</v-btn>
         </div>
-      </template>
+      </template>-->
     </v-navigation-drawer>
 
     <v-app-bar dark app fixed clipped-left height="70px" color="grey darken-3">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-spacer />
+      <v-toolbar-title>Kouvee Petshop - {{nama}}</v-toolbar-title>
+      <v-spacer />
 
-      <VSpacer />
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <div v-on="on">
+            <v-btn icon>
+              <v-icon color="grey lighten-1" @click="logout()">mdi-logout</v-icon>
+            </v-btn>
+          </div>
+        </template>
+        <span>Logout</span>
+      </v-tooltip>
     </v-app-bar>
 
     <VContent>
@@ -89,12 +102,16 @@ export default {
         to: "/ukuranHewan"
       }
     ],
-    nip: localStorage.getItem("NIP")
+    nip: sessionStorage.getItem("NIP"),
+    nama: sessionStorage.getItem("Nama"),
+    jabatan: sessionStorage.getItem("Jabatan")
   }),
+
   methods: {
     logout() {
+      sessionStorage.removeItem("NIP");
+      sessionStorage.removeItem("Nama");
       this.$router.push({ name: "Login Page" });
-      localStorage.removeItem("NIP");
     }
   }
 };

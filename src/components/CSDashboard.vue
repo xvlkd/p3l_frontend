@@ -59,7 +59,7 @@ export default {
         to: "/Hewan"
       }
     ],
-    nip: localStorage.getItem("NIP")
+    nip: sessionStorage.getItem("NIP")
   }),
 
   created() {
@@ -69,7 +69,7 @@ export default {
   methods: {
     logout() {
       this.$router.push({ name: "Login Page" });
-      localStorage.removeItem("NIP");
+      sessionStorage.removeItem("NIP");
     }
   }
 };

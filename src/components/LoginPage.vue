@@ -81,7 +81,9 @@ export default {
           } else {
             this.$router.push({ name: "KasirPage" });
           }
-          localStorage.setItem("NIP", this.form.NIP);
+          sessionStorage.setItem("NIP", response.data.data.NIP);
+          sessionStorage.setItem("Nama", response.data.data.namaPegawai);
+          sessionStorage.setItem("Jabatan", response.data.data.jabatan);
         })
         .catch(error => {
           this.errors = error;
