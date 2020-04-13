@@ -7,9 +7,8 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>{{nip}}</v-list-item-title>
+          <v-list-item-title>NIP: {{nip}}</v-list-item-title>
           <v-list-item-subtitle>{{jabatan}}</v-list-item-subtitle>
-          <v-list-item-subtitle>Logged In</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
@@ -25,11 +24,6 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <!-- <template v-slot:append>
-        <div class="pa-2">
-          <v-btn block >Logout</v-btn>
-        </div>
-      </template>-->
     </v-navigation-drawer>
 
     <v-app-bar dark app fixed clipped-left height="70px" color="grey darken-3">
@@ -66,11 +60,6 @@ export default {
         icon: "mdi-account-group",
         to: "/Pegawai"
       },
-      // {
-      //   title: "Customer",
-      //   icon: "mdi-account-box-multiple",
-      //   to: "/Customer"
-      // },
       {
         title: "Layanan",
         icon: "mdi-face-agent",
@@ -86,11 +75,6 @@ export default {
         icon: "mdi-truck-fast",
         to: "/Supplier"
       },
-      // {
-      //   title: "Hewan",
-      //   icon: "mdi-dog-service",
-      //   to: "/Hewan"
-      // },
       {
         title: "Jenis Hewan",
         icon: "mdi-dog",
@@ -100,6 +84,11 @@ export default {
         title: "Ukuran Hewan",
         icon: "mdi-size-xxl",
         to: "/ukuranHewan"
+      },
+      {
+        title: "Pengadaan",
+        icon: "mdi-package",
+        to: "/pengadaan"
       }
     ],
     nip: sessionStorage.getItem("NIP"),
@@ -111,6 +100,7 @@ export default {
     logout() {
       sessionStorage.removeItem("NIP");
       sessionStorage.removeItem("Nama");
+      sessionStorage.removeItem("Jabatan");
       this.$router.push({ name: "Login Page" });
     }
   }

@@ -29,7 +29,8 @@ const routes = [{
 				next();
 			} else {
 				sessionStorage.removeItem("NIP");
-				sessionStorage.removeItem("Nama")
+				sessionStorage.removeItem("Nama");
+				sessionStorage.removeItem("Jabatan");
 				next({
 					path: "/"
 				});
@@ -44,7 +45,8 @@ const routes = [{
 						next();
 					} else {
 						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama")
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
 						next({
 							path: "/"
 						});
@@ -61,7 +63,8 @@ const routes = [{
 						next();
 					} else {
 						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama")
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
 						next({
 							path: "/"
 						});
@@ -78,7 +81,8 @@ const routes = [{
 						next();
 					} else {
 						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama")
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
 						next({
 							path: "/"
 						});
@@ -95,7 +99,8 @@ const routes = [{
 						next();
 					} else {
 						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama")
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
 						next({
 							path: "/"
 						});
@@ -112,7 +117,8 @@ const routes = [{
 						next();
 					} else {
 						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama")
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
 						next({
 							path: "/"
 						});
@@ -129,7 +135,8 @@ const routes = [{
 						next();
 					} else {
 						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama")
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
 						next({
 							path: "/"
 						});
@@ -146,7 +153,8 @@ const routes = [{
 						next();
 					} else {
 						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama")
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
 						next({
 							path: "/"
 						});
@@ -155,6 +163,24 @@ const routes = [{
 				name: 'Ukuran Hewan',
 				path: '/ukuranHewan',
 				component: loadDashboardOWner('UkuranHewan')
+			},
+
+			{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
+						next({
+							path: "/"
+						});
+					}
+				},
+				name: 'Pengadaan',
+				path: '/pengadaan',
+				component: loadDashboardOWner('Pengadaan')
 			},
 		]
 	},
