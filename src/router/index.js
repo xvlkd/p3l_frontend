@@ -52,6 +52,24 @@ const routes = [{
 						});
 					}
 				},
+				name: 'OwnerProfile',
+				path: '/ownerProfile',
+				component: loadDashboardOWner('Profile'),
+			},
+
+			{
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.getItem("NIP") == "Owner") {
+						next();
+					} else {
+						sessionStorage.removeItem("NIP");
+						sessionStorage.removeItem("Nama");
+						sessionStorage.removeItem("Jabatan");
+						next({
+							path: "/"
+						});
+					}
+				},
 				name: 'Pegawai',
 				path: '/pegawai',
 				component: loadDashboardOWner('Pegawai'),

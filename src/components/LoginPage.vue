@@ -74,16 +74,16 @@ export default {
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
           this.text = response.data.message; //memasukkan pesan kesnackbar
+          sessionStorage.setItem("NIP", response.data.data.NIP);
+          sessionStorage.setItem("Nama", response.data.data.namaPegawai);
+          sessionStorage.setItem("Jabatan", response.data.data.jabatan);
           if (this.form.NIP == "Owner") {
-            this.$router.push({ name: "OwnerPage" });
+            this.$router.push({ name: "OwnerProfile" });
           } else if (this.form.NIP.includes("CS")) {
             this.$router.push({ name: "CSPage" });
           } else {
             this.$router.push({ name: "KasirPage" });
           }
-          sessionStorage.setItem("NIP", response.data.data.NIP);
-          sessionStorage.setItem("Nama", response.data.data.namaPegawai);
-          sessionStorage.setItem("Jabatan", response.data.data.jabatan);
         })
         .catch(error => {
           this.errors = error;
