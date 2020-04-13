@@ -100,7 +100,6 @@
                   prepend-icon="mdi-camera"
                   v-model="form.gambar"
                   required
-                  @change="onFileSelected"
                 ></v-file-input>
               </v-col>
             </v-row>
@@ -267,15 +266,18 @@ export default {
         });
     },
 
-    onFileSelected() {
-      var reader = new FileReader();
+    // onFileSelected(item) {
+    //   // var reader = new FileReader();
 
-      reader.onload = () => {
-        this.imageUrl = reader.result;
-      };
+    //   // reader.onload = () => {
+    //   //   this.imageUrl = reader.result;
+    //   // };
 
-      reader.readAsDataURL(this.form.gambar);
-    },
+    //   // reader.readAsDataURL(this.form.gambar);
+    //   var uri = this.$apiUrl + "produk/" + item.idProduk + "/gambar";
+
+    //   this.form.gambar = uri;
+    // },
 
     editHandler(item) {
       if (this.status == 1) {

@@ -57,6 +57,31 @@
       </v-container>
     </v-card>
 
+    <v-dialog v-model="dialog" presistent max-width="400">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  prepend-icon="mdi-rename-box"
+                  label="Ukuran Hewan*"
+                  v-model="form.namaUkuran"
+                  required
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="dialogSoftDelete" presistent max-width="400">
       <v-card>
         <v-card-text>
@@ -75,7 +100,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
+          <v-btn color="red darken-1" text @click="dialogSoftDelete=false, resetForm()">Close</v-btn>
           <v-btn color="blue darken-1" text @click="restore()">{{this.btnDialog}}</v-btn>
         </v-card-actions>
       </v-card>
