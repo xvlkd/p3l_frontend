@@ -1,8 +1,8 @@
 <template>
-  <v-data-table :headers="headers" :items="layanans" :search="keyword" :loading="load">
+  <v-data-table :headers="headers" :items="layanans" :search="keyword">
     <template v-slot:top>
       <v-toolbar>
-        <v-toolbar-title>Data layanan</v-toolbar-title>
+        <v-toolbar-title>Data Layanan</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer />
         <v-flex xs5 class="text-right">
@@ -11,11 +11,15 @@
         <v-spacer />
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-btn rounded @click="dialog=true" color="green accent-3">
-          <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah layanan
+          <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah Layanan
+        </v-btn>
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-btn rounded @click="getDataSoftDelete()" color="red accent-3">
+          <v-icon size="18" class="mr-1">mdi-delete</v-icon>Tampil Log Hapus
         </v-btn>
       </v-toolbar>
 
-      <v-dialog v-model="dialog" presistent max-width="400">
+      <v-dialog v-model="dialog" persistent max-width="400">
         <v-card>
           <v-card-text>
             <v-container>
@@ -69,34 +73,15 @@
 export default {
   data: () => ({
     dialog: false,
+    dialogSoftDelete: false,
     items: [],
     keyword: "",
     headers: [
-      {
-        text: "ID layanan",
-        value: "idLayanan"
-      },
-      {
-        text: "Nama layanan",
-        value: "namaLayanan"
-      },
-      {
-        text: "Harga",
-        value: "harga"
-      },
-      {
-        text: "ID Ukuran",
-        value: "idUkuran"
-      },
-      {
-        text: "Ditambahkan Oleh",
-        value: "idPegawaiLog"
-      },
-      {
-        text: "Action",
-        value: "actions",
-        sortable: false
-      }
+      { text: "Nama layanan", value: "namaLayanan" },
+      { text: "Harga", value: "harga" },
+      { text: "ID Ukuran", value: "idUkuran" },
+      { text: "Ditambahkan Oleh", value: "idPegawaiLog" },
+      { text: "Action", value: "actions", sortable: false }
     ],
     layanans: [],
     form: {
@@ -117,6 +102,13 @@ export default {
       });
     },
 
+    getDataSoftDelete() {
+      var uri = this.$apiUrl + "layanan/softDelete";
+      this.$http.get(uri, this.layanan).then(response => {
+        this.layanans = response.data.data;
+      });
+    },
+
     sendData() {
       this.layanan.append("namaLayanan", this.form.namaLayanan);
       this.layanan.append("harga", this.form.harga);
@@ -124,10 +116,9 @@ export default {
       this.layanan.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "layanan";
-      this.load = true;
       this.$http
         .post(uri, this.layanan)
-        .then(this.getData(), this.resetForm(), (this.load = false));
+        .then(this.getData(), this.resetForm());
     },
 
     updateData() {
@@ -137,17 +128,16 @@ export default {
       this.layanan.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "layanan/" + this.idLayanan;
-      this.load = true;
       this.$http
         .post(uri, this.layanan)
-        .then(this.getData(), this.resetForm(), (this.load = false));
+        .then(this.getData(), this.resetForm());
     },
 
     deleteData(idLayanan) {
       var uri = this.$apiUrl + "layanan/" + idLayanan; //data dihapus berdasarkan id
       this.$http
-        .delete(uri, this.layanans)
-        .then(this.getData(), this.resetForm(), (this.load = false));
+        .delete(uri, this.layanan)
+        .then(this.getData(), this.resetForm());
     },
 
     editHandler(item) {
@@ -163,9 +153,11 @@ export default {
       if (this.typeInput === "new") {
         this.sendData();
         this.dialog = false;
+        this.resetForm();
       } else {
         this.updateData();
         this.dialog = false;
+        this.resetForm();
       }
     },
 

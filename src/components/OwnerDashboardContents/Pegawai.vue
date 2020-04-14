@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="pegawais" :search="keyword" :loading="load">
+  <v-data-table :headers="headers" :items="pegawais" :search="keyword">
     <template v-slot:top>
       <v-toolbar>
         <v-toolbar-title>Data Pegawai</v-toolbar-title>
@@ -12,6 +12,10 @@
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-btn rounded @click="dialog=true" color="green accent-3">
           <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah Pegawai
+        </v-btn>
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-btn rounded @click="getDataSoftDelete()" color="red accent-3">
+          <v-icon size="18" class="mr-1">mdi-delete</v-icon>Tampil Log Hapus
         </v-btn>
       </v-toolbar>
 
@@ -102,39 +106,14 @@ export default {
     items: [],
     keyword: "",
     headers: [
-      {
-        text: "ID Pegawai",
-        value: "NIP"
-      },
-      {
-        text: "Nama Pegawai",
-        value: "namaPegawai"
-      },
-      {
-        text: "Alamat",
-        value: "alamat"
-      },
-      {
-        text: "Tanggal Lahir",
-        value: "tglLahir"
-      },
-      {
-        text: "Nomor Handphone",
-        value: "noHp"
-      },
-      {
-        text: "Jabatan",
-        value: "jabatan"
-      },
-      {
-        text: "Ditambahkan Oleh",
-        value: "idPegawaiLog"
-      },
-      {
-        text: "Action",
-        value: "actions",
-        sortable: false
-      }
+      { text: "ID Pegawai", value: "NIP" },
+      { text: "Nama Pegawai", value: "namaPegawai" },
+      { text: "Alamat", value: "alamat" },
+      { text: "Tanggal Lahir", value: "tglLahir" },
+      { text: "Nomor Handphone", value: "noHp" },
+      { text: "Jabatan", value: "jabatan" },
+      { text: "Ditambahkan Oleh", value: "idPegawaiLog" },
+      { text: "Action", value: "actions", sortable: false }
     ],
     pegawais: [],
     form: {
@@ -158,6 +137,13 @@ export default {
       });
     },
 
+    getDataSoftDelete() {
+      var uri = this.$apiUrl + "pegawai/softDelete";
+      this.$http.get(uri, this.pegawai).then(response => {
+        this.pegawais = response.data.data;
+      });
+    },
+
     sendData() {
       this.pegawai.append("namaPegawai", this.form.namaPegawai);
       this.pegawai.append("alamat", this.form.alamat);
@@ -168,8 +154,7 @@ export default {
       this.pegawai.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "pegawai";
-      this.load = true;
-      this.$http.post(uri, this.pegawai).then(this.getData(), this.resetForm(), this.load = false);
+      this.$http.post(uri, this.pegawai).then(this.getData(), this.resetForm());
     },
 
     updateData() {
@@ -182,13 +167,12 @@ export default {
       this.pegawai.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + "pegawai/" + this.NIP;
-      this.load = true;
-      this.$http.post(uri, this.pegawai).then(this.getData(), this.resetForm(), this.load = false);
+      this.$http.post(uri, this.pegawai).then(this.getData(), this.resetForm());
     },
 
     deleteData(NIP) {
       var uri = this.$apiUrl + "pegawai/" + NIP; //data dihapus berdasarkan id
-      this.$http.delete(uri, this.pegawais).then(this.getData(), this.resetForm(), this.load = false,);
+      this.$http.delete(uri, this.pegawais).then(this.getData(), this.resetForm());
     },
 
     editHandler(item) {
