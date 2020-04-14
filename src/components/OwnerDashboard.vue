@@ -29,7 +29,7 @@
     <v-app-bar dark app fixed clipped-left height="70px" color="grey darken-3">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer />
-      <v-toolbar-title>Kouvee Petshop - {{nama}}</v-toolbar-title>
+      <v-toolbar-title>Kouvee Petshop - {{this.nama}}</v-toolbar-title>
       <v-spacer />
 
       <v-tooltip bottom>
@@ -91,17 +91,26 @@ export default {
         to: "/pengadaan"
       }
     ],
-    nip: sessionStorage.getItem("NIP"),
-    nama: sessionStorage.getItem("Nama"),
-    jabatan: sessionStorage.getItem("Jabatan")
+    nip: "",
+    nama: "",
+    jabatan: "",
   }),
 
   methods: {
     logout() {
-      sessionStorage.removeItem("NIP");
-      sessionStorage.removeItem("Nama");
-      sessionStorage.removeItem("Jabatan");
+      this.$session.destroy();
       this.$router.push({ name: "Login Page" });
+    }
+  },
+
+  mounted(){
+    if(!this.$session.exists())
+      this.$router.push({ name: "Login Page" });
+    else
+    {
+      this.nip= this.$session.get('NIP');
+      this.nama= this.$session.get("Nama");
+      this.jabatan= this.$session.get("Jabatan");
     }
   }
 };

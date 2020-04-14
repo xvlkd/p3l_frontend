@@ -24,178 +24,58 @@ const routes = [{
 	},
 
 	{
-		beforeEnter: (to, from, next) => {
-			if (sessionStorage.getItem("NIP") == "Owner") {
-				next();
-			} else {
-				sessionStorage.removeItem("NIP");
-				sessionStorage.removeItem("Nama");
-				sessionStorage.removeItem("Jabatan");
-				next({
-					path: "/"
-				});
-			}
-		},
 		name: 'OwnerPage',
 		path: '/owner',
 		component: DashboardOwner,
 		children: [{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'OwnerProfile',
 				path: '/ownerProfile',
 				component: loadDashboardOWner('Profile'),
 			},
 
 			{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'Pegawai',
 				path: '/pegawai',
 				component: loadDashboardOWner('Pegawai'),
 			},
 
 			{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'Layanan',
 				path: '/layanan',
 				component: loadDashboardOWner('Layanan')
 			},
 
 			{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'Produk',
 				path: '/produk',
 				component: loadDashboardOWner('Produk')
 			},
 
 			{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'Deleted Produk',
 				path: '/deleted-produk',
 				component: loadDashboardOWner('DeletedProduk')
 			},
 
 			{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'Supplier',
 				path: '/supplier',
 				component: loadDashboardOWner('Supplier')
 			},
 
 			{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'Jenis Hewan',
 				path: '/jenisHewan',
 				component: loadDashboardOWner('JenisHewan')
 			},
 
 			{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'Ukuran Hewan',
 				path: '/ukuranHewan',
 				component: loadDashboardOWner('UkuranHewan')
 			},
 
 			{
-				beforeEnter: (to, from, next) => {
-					if (sessionStorage.getItem("NIP") == "Owner") {
-						next();
-					} else {
-						sessionStorage.removeItem("NIP");
-						sessionStorage.removeItem("Nama");
-						sessionStorage.removeItem("Jabatan");
-						next({
-							path: "/"
-						});
-					}
-				},
 				name: 'Pengadaan',
 				path: '/pengadaan',
 				component: loadDashboardOWner('Pengadaan')

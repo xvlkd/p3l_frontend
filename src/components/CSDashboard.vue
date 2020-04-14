@@ -66,9 +66,9 @@ export default {
         to: "/Hewan"
       }
     ],
-    nip: sessionStorage.getItem("NIP"),
-    nama: sessionStorage.getItem("Nama"),
-    jabatan: sessionStorage.getItem("Jabatan")
+    nip: "",
+    nama: "",
+    jabatan: "",
   }),
 
   created() {
@@ -77,10 +77,19 @@ export default {
 
   methods: {
     logout() {
-      sessionStorage.removeItem("NIP");
-      sessionStorage.removeItem("Nama");
-      sessionStorage.removeItem("Jabatan");
+      this.$session.destroy();
       this.$router.push({ name: "Login Page" });
+    }
+  },
+
+  mounted(){
+    if(!this.$session.exists())
+      this.$router.push({ name: "Login Page" });
+    else
+    {
+      this.nip= this.$session.get('NIP');
+      this.nama= this.$session.get("Nama");
+      this.jabatan= this.$session.get("Jabatan");
     }
   }
 };
