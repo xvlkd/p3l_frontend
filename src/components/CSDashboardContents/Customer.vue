@@ -128,7 +128,7 @@ export default {
     getData() {
       var uri = this.$apiUrl + "customer";
       this.$http.get(uri, this.customer).then(response => {
-        this.customers = response.data.data;
+        this.customers = response.data.customer;
       });
     },
 

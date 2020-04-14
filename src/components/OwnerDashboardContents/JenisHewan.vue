@@ -17,7 +17,7 @@
             >
               <v-icon size="18" class="mr-2">mdi-pencil-plus</v-icon>Tambah Jenis Hewan
             </v-btn>
-
+            
             <v-btn
               depressed
               dark
@@ -154,20 +154,21 @@ export default {
     judul: "Data Jenis Hewan",
     btnLog: "Tampil Log Hapus",
     btnDialog: "Save",
-    dialogSoftDelete: false
+    dialogSoftDelete: false,
+    idPegawaiLog:"",
   }),
   methods: {
     getData() {
       var uri = this.$apiUrl + "jenisHewan";
       this.$http.get(uri, this.jenis).then(response => {
-        this.jenises = response.data.data;
+        this.jenises = response.data.jenis;
       });
     },
 
     getDataSoftDelete() {
       var uri = this.$apiUrl + "jenisHewan/softDelete";
       this.$http.get(uri, this.jenis).then(response => {
-        this.jenises = response.data.data;
+        this.jenises = response.data.jenis;
       });
     },
 
@@ -213,7 +214,7 @@ export default {
 
     updateData() {
       this.jenis.append("namaJenis", this.form.namaJenis);
-      this.jenis.append("idPegawaiLog", "Owner");
+      this.jenis.append("idPegawaiLog", this.idPegawaiLog);
 
       var uri = this.$apiUrl + `jenisHewan/${this.idJenis}`;
       this.load = true;
@@ -242,12 +243,32 @@ export default {
 
     deleteData(idJenis) {
       var uri;
+      this.jenis.append("idPegawaiLog", this.idPegawaiLog);
       if (this.status == 1) {
         uri = this.$apiUrl + "jenisHewan/" + idJenis; //data dihapus berdasarkan id
+        this.$http
+        .post(uri, this.jenis)
+        .then(response => {
+          this.snackbar = true;
+          this.text = response.data.message;
+          this.color = "green";
+          this.deleteDialog = false;
+          if (this.status == 1) {
+            this.getData();
+          } else {
+            this.getDataSoftDelete();
+          }
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+        });
+
       } else {
         uri = this.$apiUrl + "jenisHewan/" + idJenis + "/permanen";
-      }
-      this.$http
+        this.$http
         .delete(uri)
         .then(response => {
           this.snackbar = true;
@@ -266,6 +287,7 @@ export default {
           this.text = "Try Again";
           this.color = "red";
         });
+      }
     },
 
     setForm() {
@@ -336,6 +358,7 @@ export default {
 
   mounted() {
     this.getData();
+    this.idPegawaiLog = this.$session.get('NIP');
   }
 };
 </script>

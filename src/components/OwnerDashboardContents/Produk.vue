@@ -217,7 +217,8 @@ export default {
     dialogSoftDelete: false,
     konfirmasi: false,
     valid: true,
-    imageUrl: null
+    imageUrl: null,
+    idPegawaiLog:"",
   }),
   methods: {
     getData() {
@@ -265,19 +266,6 @@ export default {
           this.load = false;
         });
     },
-
-    // onFileSelected(item) {
-    //   // var reader = new FileReader();
-
-    //   // reader.onload = () => {
-    //   //   this.imageUrl = reader.result;
-    //   // };
-
-    //   // reader.readAsDataURL(this.form.gambar);
-    //   var uri = this.$apiUrl + "produk/" + item.idProduk + "/gambar";
-
-    //   this.form.gambar = uri;
-    // },
 
     editHandler(item) {
       if (this.status == 1) {
@@ -338,14 +326,30 @@ export default {
 
     deleteData(idProduk) {
       var uri;
-
+      this.produk.append("idPegawaiLog", this.idPegawaiLog);
       if (this.status == 1) {
         uri = this.$apiUrl + "produk/" + idProduk;
+        this.$http
+        .post(uri,this.produk)
+        .then(response => {
+          this.snackbar = true;
+          this.text = response.data.message;
+          this.color = "green";
+          if (this.status == 1) {
+            this.getData();
+          } else {
+            this.getDataSoftDelete();
+          }
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+        });
       } else {
         uri = this.$apiUrl + "produk/" + idProduk + "/permanen"; //data dihapus berdasarkan id
-      }
-
-      this.$http
+        this.$http
         .delete(uri)
         .then(response => {
           this.snackbar = true;
@@ -363,6 +367,7 @@ export default {
           this.text = "Try Again";
           this.color = "red";
         });
+      }
     },
 
     setForm() {
@@ -439,49 +444,9 @@ export default {
 
   mounted() {
     this.getData();
+    this.idPegawaiLog = this.$session.get('NIP');
   }
 };
 </script>
 
-          <!-- <template v-slot:body="{ items }">
-            <tbody>
-              <v-tooltip right>
-                <tr v-for="item in items" :key="item.idProduk">
-                  <td>{{ item.idProduk }}</td>
-                  <td>{{ item.namaProduk }}</td>
-                  <td>
-                    <v-img
-                      :src="$apiUrl + 'produk/' + item.idProduk + '/gambar'"
-                      width="80"
-                      height="80"
-                    ></v-img>
-                  </td>
-                  <td>{{ item.harga }}</td>
-                  <td>{{ item.stok }}</td>
-                  <td>{{ item.jumlahMinimal }}</td>
-                  <td>
-                    {{ item.idPegawaiLog }}
-                    <span>lihat password</span>
-          </td>-->
-                   <!-- <td>
-                    <v-btn icon color="indigo" light @click="editHandler(item)">
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon color="error" light @click="deleteData(item.idProduk)">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                  </td>
-                </tr>
-              </v-tooltip>
-            </tbody>
-          </template>-->
-
-                    <!-- 
-          <template v-slot:item.idPegawaiLog="{ item }">
-            <v-tooltip right>
-              <template v-slot:activator="{ on }">
-                <v-chip dark v-on="on">{{ item.idPegawaiLog }}</v-chip>
-              </template>
-              <span></span>
-            </v-tooltip>
-          </template>-->
+          

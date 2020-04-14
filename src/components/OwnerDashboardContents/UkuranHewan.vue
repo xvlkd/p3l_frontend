@@ -154,20 +154,21 @@ export default {
     judul: "Data Ukuran Hewan",
     btnLog: "Tampil Log Hapus",
     btnDialog: "Save",
-    dialogSoftDelete: false
+    dialogSoftDelete: false,
+    idPegawaiLog:"",
   }),
   methods: {
     getData() {
       var uri = this.$apiUrl + "ukuranHewan";
       this.$http.get(uri, this.ukuran).then(response => {
-        this.ukurans = response.data.data;
+        this.ukurans = response.data.ukuran;
       });
     },
 
     getDataSoftDelete() {
       var uri = this.$apiUrl + "ukuranHewan/softDelete";
       this.$http.get(uri, this.ukuran).then(response => {
-        this.ukurans = response.data.data;
+        this.ukurans = response.data.ukuran;
       });
     },
 
@@ -215,7 +216,7 @@ export default {
 
     updateData() {
       this.ukuran.append("namaUkuran", this.form.namaUkuran);
-      this.ukuran.append("idPegawaiLog", this.form.idPegawaiLog);
+      this.ukuran.append("idPegawaiLog", this.idPegawaiLog);
 
       var uri = this.$apiUrl + `ukuranHewan/${this.idUkuran}`;
       this.load = true;
@@ -245,12 +246,31 @@ export default {
     deleteData(idUkuran) {
       var uri;
 
+      this.ukuran.append("idPegawaiLog", this.idPegawaiLog);
       if (this.status == 1) {
         uri = this.$apiUrl + "ukuranHewan/" + idUkuran; //data dihapus berdasarkan id
+        this.$http
+        .post(uri, this.ukuran)
+        .then(response => {
+          this.snackbar = true;
+          this.text = response.data.message;
+          this.color = "green";
+          this.dialog = false;
+          if (this.status == 1) {
+            this.getData();
+          } else {
+            this.getDataSoftDelete();
+          }
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+        });
       } else {
         uri = this.$apiUrl + "ukuranHewan/" + idUkuran + "/permanen";
-      }
-      this.$http
+        this.$http
         .delete(uri)
         .then(response => {
           this.snackbar = true;
@@ -269,6 +289,7 @@ export default {
           this.text = "Try Again";
           this.color = "red";
         });
+      }
     },
 
     setForm() {
@@ -338,6 +359,7 @@ export default {
 
   mounted() {
     this.getData();
+    this.idPegawaiLog = this.$session.get('NIP');
   }
 };
 </script>

@@ -180,14 +180,14 @@ export default {
     getData() {
       var uri = this.$apiUrl + "supplier";
       this.$http.get(uri, this.suppliers).then(response => {
-        this.suppliers = response.data.data;
+        this.suppliers = response.data.supplier;
       });
     },
 
     getDataSoftDelete() {
       var uri = this.$apiUrl + "supplier/softDelete";
       this.$http.get(uri, this.suppliers).then(response => {
-        this.suppliers = response.data.data;
+        this.suppliers = response.data.supplier;
       });
     },
 
