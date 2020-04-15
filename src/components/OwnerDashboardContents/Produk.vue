@@ -142,7 +142,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="red darken-1" text @click="dialogSoftDelete=false, resetForm()">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm()">{{this.btn}}</v-btn>
+          <v-btn color="blue darken-1" text @click="restore()">{{this.btn}}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -391,7 +391,6 @@ export default {
       this.produk.append("harga", this.form.harga);
       this.produk.append("stok", this.form.stok);
       this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
-      this.produk.append("gambar", this.form.gambar);
       this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + `produk/${this.idProduk}/restore`;

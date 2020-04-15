@@ -198,7 +198,7 @@ export default {
     },
 
     editHandler(item) {
-      if (status == 1) {
+      if (this.status == 1) {
         this.typeInput = "edit";
         this.dialog = true;
         this.idUkuran = item.idUkuran;
@@ -274,8 +274,6 @@ export default {
     setForm() {
       if (this.typeInput === "new") {
         this.sendData();
-      } else if (this.status == 1) {
-        this.restore();
       } else {
         this.updateData();
       }

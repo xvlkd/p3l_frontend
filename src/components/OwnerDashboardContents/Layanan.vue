@@ -1,67 +1,86 @@
 <template>
   <v-data-table :headers="headers" :items="layanans" :search="keyword" :loading="load">
-    <template v-slot:top>
-      <v-toolbar>
-        <v-toolbar-title>Data layanan</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer />
-        <v-flex xs5 class="text-right">
-          <v-text-field v-model="keyword" append-icon="mdi-search" label="Search" hide-details></v-text-field>
-        </v-flex>
-        <v-spacer />
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-btn rounded @click="dialog=true" color="green accent-3">
-          <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah layanan
-        </v-btn>
-      </v-toolbar>
-
-      <v-dialog v-model="dialog" presistent max-width="400">
-        <v-card>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    prepend-icon="mdi-rename-box"
-                    label="Nama layanan*"
-                    v-model="form.namaLayanan"
-                    required
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12">
-                  <v-text-field
-                    prepend-icon="mdi-cash-usd"
-                    label="Harga*"
-                    v-model="form.harga"
-                    required
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12">
-                  <v-text-field
-                    prepend-icon="mdi-format-size"
-                    label="ID Ukuran*"
-                    v-model="form.idUkuran"
-                    required
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-container>
-            <small>*indicates required field</small>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Cancel</v-btn>
-            <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+    <template v-slot:body="{ items }">
+      <tbody>
+        <tr v-for="item in items" :key="item.idLayanan">
+          <td>{{ item.idLayanan }}</td>
+          <td>{{item.namaLayanan}}</td>
+          <td>{{item.harga}}</td>
+          <td>{{ item.namaUkuran }}</td>
+          <td>{{ item.idPegawaiLog }}</td>
+          <td>
+            <v-btn icon color="indigo" light @click="editHandler(item)">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn icon color="error" light @click="deleteData(item.idUkuran)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </td>
+        </tr>
+      </tbody>
     </template>
+    <!-- <template v-slot:top> -->
+    <v-toolbar>
+      <v-toolbar-title>Data layanan</v-toolbar-title>
+      <v-divider class="mx-4" inset vertical></v-divider>
+      <v-spacer />
+      <v-flex xs5 class="text-right">
+        <v-text-field v-model="keyword" append-icon="mdi-search" label="Search" hide-details></v-text-field>
+      </v-flex>
+      <v-spacer />
+      <v-divider class="mx-4" inset vertical></v-divider>
+      <v-btn rounded @click="dialog=true" color="green accent-3">
+        <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah layanan
+      </v-btn>
+    </v-toolbar>
+
+    <v-dialog v-model="dialog" presistent max-width="400">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  prepend-icon="mdi-rename-box"
+                  label="Nama layanan*"
+                  v-model="form.namaLayanan"
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-text-field
+                  prepend-icon="mdi-cash-usd"
+                  label="Harga*"
+                  v-model="form.harga"
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-text-field
+                  prepend-icon="mdi-format-size"
+                  label="ID Ukuran*"
+                  v-model="form.idUkuran"
+                  required
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Cancel</v-btn>
+          <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- </template>
     <template v-slot:item.actions="{ item }">
       <v-icon color="indigo" class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
       <v-icon color="error" @click="deleteData(item.idLayanan)">mdi-delete</v-icon>
-    </template>
+    </template>-->
   </v-data-table>
 </template>
 
@@ -85,7 +104,7 @@ export default {
         value: "harga"
       },
       {
-        text: "ID Ukuran",
+        text: "Nama Ukuran",
         value: "idUkuran"
       },
       {
@@ -106,7 +125,12 @@ export default {
       idPegawaiLog: "Owner"
     },
     layanan: new FormData(),
-    typeInput: "new"
+    typeInput: "new",
+    ukurans: [
+      {
+        namaUkuran: ""
+      }
+    ]
   }),
 
   methods: {
