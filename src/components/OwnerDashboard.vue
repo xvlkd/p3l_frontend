@@ -61,6 +61,11 @@ export default {
         to: "/Pegawai"
       },
       {
+        title: "Customer",
+        icon: "mdi-account-multiple",
+        to: "/Customer"
+      },
+      {
         title: "Layanan",
         icon: "mdi-face-agent",
         to: "/Layanan"
@@ -84,6 +89,11 @@ export default {
         title: "Ukuran Hewan",
         icon: "mdi-size-xxl",
         to: "/ukuranHewan"
+      },
+      {
+        title: "Hewan",
+        icon: "mdi-paw",
+        to: "/Hewan"
       },
       {
         title: "Pengadaan",

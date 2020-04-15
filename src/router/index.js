@@ -76,6 +76,18 @@ const routes = [{
 			},
 
 			{
+				name: 'Hewan',
+				path: '/hewan',
+				component: loadDashboardOWner('Hewan')
+			},
+
+			{
+				name: 'Customer',
+				path: '/customer',
+				component: loadDashboardOWner('Customer')
+			},
+
+			{
 				name: 'Pengadaan',
 				path: '/pengadaan',
 				component: loadDashboardOWner('Pengadaan')
