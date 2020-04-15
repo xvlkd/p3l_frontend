@@ -95,12 +95,12 @@ export default {
         value: "tglLahir"
       },
       {
-        text: "ID Jenis",
-        value: "idJenis"
+        text: "Jenis Hewan",
+        value: "namaJenis"
       },
       {
-        text: "ID Ukuran",
-        value: "idCustomer"
+        text: "Nama Pemilik",
+        value: "namaCustomer"
       },
       {
         text: "Ditambahkan Oleh",
@@ -128,7 +128,7 @@ export default {
     getData() {
       var uri = this.$apiUrl + "hewan";
       this.$http.get(uri, this.hewan).then(response => {
-        this.hewans = response.data.data;
+        this.hewans = response.data.hewan;
       });
     },
 
