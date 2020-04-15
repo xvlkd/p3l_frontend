@@ -57,7 +57,7 @@
       </v-container>
     </v-card>
 
-    <v-dialog v-model="dialog" presistent max-width="400">
+    <v-dialog v-model="dialog" persistent max-width="400">
       <v-card>
         <v-card-text>
           <v-container>
@@ -82,7 +82,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="dialogSoftDelete" presistent max-width="400">
+    <v-dialog v-model="dialogSoftDelete" persistent max-width="400">
       <v-card>
         <v-card-text>
           <v-container>

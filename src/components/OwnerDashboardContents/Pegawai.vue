@@ -20,22 +20,22 @@
               class="mr-4"
               v-if="status === 1"
             >
-          <v-icon size="18" class="mr-1">mdi-pencil-plus</v-icon>Tambah Pegawai
+          <v-icon class="mr-1">mdi-pencil-plus</v-icon>Tambah Pegawai
         </v-btn>
         <v-btn
               depressed
               dark
               rounded
               style="text-transform: none !important;"
-              color="green accent-3"
+              color="blue accent-3"
               @click="deletedPegawai()"
             >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>
+              <v-icon class="mr-2">mdi-delete</v-icon>
               {{namaBtn}}
             </v-btn>
       </v-toolbar>
 
-      <v-dialog v-model="dialog" presistent max-width="600">
+      <v-dialog v-model="dialog" persistent max-width="600">
         <v-card>
           <v-card-text>
             <v-container>
@@ -127,7 +127,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="dialogSoftDelete" presistent max-width="400">
+      <v-dialog v-model="dialogSoftDelete" persistent max-width="400">
       <v-card>
         <v-card-text>
           <v-container>
