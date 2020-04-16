@@ -86,12 +86,6 @@ const routes = [{
 				path: '/customer',
 				component: loadDashboardOWner('Customer')
 			},
-
-			{
-				name: 'Pengadaan',
-				path: '/pengadaan',
-				component: loadDashboardOWner('Pengadaan')
-			},
 		]
 	},
 
