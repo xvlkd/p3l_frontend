@@ -14,15 +14,50 @@
 
       <v-divider></v-divider>
       <v-list>
-        <v-list-item v-for="item in items" :key="item.title" link @click="$router.push(item.to)">
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+        <v-list-group prepend-icon="mdi-file-multiple" value="true" no-action>
+          <template v-slot:activator>
+            <v-list-item-title>Data</v-list-item-title>
+          </template>
+          <v-list-item v-for="item in items" :key="item.title" link @click="$router.push(item.to)">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+        <v-divider />
+        <v-list-group prepend-icon="mdi-bank-transfer" no-action>
+          <template v-slot:activator>
+            <v-list-item-title>Transaksi</v-list-item-title>
+          </template>
+          <v-list-item v-for="item in trans" :key="item.title" link @click="$router.push(item.to)">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+        <v-divider />
+        <v-list-group prepend-icon="mdi-alpha-d-circle" no-action>
+          <template v-slot:activator>
+            <v-list-item-title>Detail</v-list-item-title>
+          </template>
+          <v-list-item v-for="item in details" :key="item.title" link @click="$router.push(item.to)">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
 
@@ -55,41 +90,24 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      {
-        title: "Pegawai",
-        icon: "mdi-account-group",
-        to: "/Pegawai"
-      },
-      {
-        title: "Layanan",
-        icon: "mdi-face-agent",
-        to: "/Layanan"
-      },
-      {
-        title: "Produk",
-        icon: "mdi-package-variant-closed",
-        to: "/Produk"
-      },
-      {
-        title: "Supplier",
-        icon: "mdi-truck-fast",
-        to: "/Supplier"
-      },
-      {
-        title: "Jenis Hewan",
-        icon: "mdi-dog",
-        to: "/jenisHewan"
-      },
-      {
-        title: "Ukuran Hewan",
-        icon: "mdi-size-xxl",
-        to: "/ukuranHewan"
-      },
-      {
-        title: "Pengadaan",
-        icon: "mdi-package",
-        to: "/pengadaan"
-      }
+      { title: "Pegawai", icon: "mdi-account-group", to: "/Pegawai" },
+      { title: "Customer", icon: "mdi-account-multiple", to: "/Customer" },
+      { title: "Layanan", icon: "mdi-face-agent", to: "/Layanan" },
+      { title: "Produk", icon: "mdi-package-variant-closed", to: "/Produk" },
+      { title: "Supplier", icon: "mdi-truck-fast", to: "/Supplier" },
+      { title: "Jenis Hewan", icon: "mdi-dog", to: "/jenisHewan" },
+      { title: "Ukuran Hewan", icon: "mdi-size-xxl", to: "/ukuranHewan" },
+      { title: "Hewan", icon: "mdi-paw", to: "/Hewan" },
+    ],
+    trans: [
+      { title: "Produk", icon: "mdi-package-variant", to: "/TransaksiProduk" },
+      { title: "Layanan", icon: "mdi-handshake", to: "/TransaksiLayanan" },
+      { title: "Pengadaan", icon: "mdi-package", to: "/TransaksiPengadaan" }
+    ],
+    details: [
+      { title: "Produk", icon: "mdi-bookmark-multiple", to: "/DetailTransaksiProduk" },
+      { title: "Layanan", icon: "mdi-bookmark-check", to: "/DetailTransaksiLayanan" },
+      { title: "Pengadaan", icon: "mdi-bookmark-plus", to: "/DetailTransaksiPengadaan" }
     ],
     nip: "",
     nama: "",
