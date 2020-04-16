@@ -10,29 +10,30 @@
         </v-flex>
         <v-spacer />
         <v-divider class="mx-4" inset vertical></v-divider>
+
         <v-btn
-              depressed
-              dark
-              rounded
-              style="text-transform: none !important;"
-              color="green accent-3"
-              @click="dialog=true"
-              class="mr-4"
-              v-if="status === 1"
-            >
-          <v-icon class="mr-1">mdi-pencil-plus</v-icon>Tambah Customer
+          depressed
+          dark
+          rounded
+          style="text-transform: none !important;"
+          color="green accent-3"
+          @click="dialog=true"
+          class="mr-4"
+          v-if="status === 1"
+        >
+          <v-icon class="mr-2">mdi-pencil-plus</v-icon>Tambah Customer
         </v-btn>
         <v-btn
-              depressed
-              dark
-              rounded
-              style="text-transform: none !important;"
-              color="blue accent-3"
-              @click="deletedCustomer()"
-            >
-              <v-icon class="mr-2">mdi-delete</v-icon>
-              {{namaBtn}}
-            </v-btn>
+          depressed
+          dark
+          rounded
+          style="text-transform: none !important;"
+          color="blue accent-3"
+          @click="setCustomer()"
+        >
+          <v-icon class="mr-2">mdi-delete</v-icon>
+          {{btnLog}}
+        </v-btn>
       </v-toolbar>
 
       <v-dialog v-model="dialog" persistent max-width="600">
@@ -43,7 +44,7 @@
                 <v-col cols="12" sm="6">
                   <v-text-field
                     prepend-icon="mdi-rename-box"
-                    label="Nama Customer*"
+                    label="Nama customer*"
                     v-model="form.namaCustomer"
                     required
                   ></v-text-field>
@@ -89,45 +90,42 @@
       </v-dialog>
 
       <v-dialog v-model="dialogSoftDelete" persistent max-width="400">
-      <v-card>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-list-item-content>
-                  <v-img :src="$apiUrl + 'customer/' + form.idCustomer + '/gambar'" width="80" height="200"></v-img>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>idCustomer: {{ form.idCustomer }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Nama Customer: {{ form.namaCustomer }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Alamat: {{ form.alamat }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Tanggal Lahir: {{ form.tglLahir }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>No Handphone: {{ form.noHp }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialogSoftDelete=false, resetForm()">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="restoreData()">{{btn}}</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        <v-card>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-list-item-content>
+                    <v-list-item-subtitle>ID Customer: {{ form.idCustomer }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Nama Customer: {{ form.namaCustomer }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Alamat: {{ form.alamat }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Tanggal Lahir: {{ form.tglLahir }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Nomor Handphone: {{ form.noHp }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1" text @click="dialogSoftDelete=false, resetForm()">Close</v-btn>
+            <v-btn color="blue darken-1" text @click="restoreData()">{{btnDialog}}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon color="indigo" class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
       <v-icon color="error" @click="deleteData(item.idCustomer)">mdi-delete</v-icon>
-    </template>
+    </template>-->
   </v-data-table>
 </template>
 
@@ -137,56 +135,34 @@ export default {
     dialog: false,
     items: [],
     keyword: "",
-    idPegawaiLog:"",
-    status: 1,
-    judul: "Data Customer",
-    namaBtn: "Tampil Log Hapus",
-    btn: "Save",
-    dialogSoftDelete: false,
     headers: [
-      {
-        text: "ID Customer",
-        value: "idCustomer"
-      },
-      {
-        text: "Nama Customer",
-        value: "namaCustomer"
-      },
-      {
-        text: "Alamat",
-        value: "alamat"
-      },
-      {
-        text: "Tanggal Lahir",
-        value: "tglLahir"
-      },
-      {
-        text: "Nomor Handphone",
-        value: "noHp"
-      },
-      {
-        text: "Ditambahkan Oleh",
-        value: "idPegawaiLog"
-      },
-      {
-        text: "Action",
-        value: "actions",
-        sortable: false
-      }
+      { text: "ID Customer", value: "idCustomer" },
+      { text: "Nama Customer", value: "namaCustomer" },
+      { text: "Alamat", value: "alamat" },
+      { text: "Tanggal Lahir", value: "tglLahir" },
+      { text: "Nomor Handphone", value: "noHp" },
+      { text: "Ditambahkan Oleh", value: "idPegawaiLog" },
+      { text: "Action", value: "actions", sortable: false }
     ],
+    load:false,
     customers: [],
+    ukurans:[],
+    idPegawaiLog:"",
     form: {
+      idCustomer:"",
       namaCustomer: "",
       alamat: "",
       tglLahir: "",
-      noHp: "",
-      jabatan: "",
+      noHp:"",
       idPegawaiLog: "Owner"
     },
     customer: new FormData(),
     typeInput: "new",
-    nip:"",
-    load:false,
+    status: 1,
+    judul: "Data Customer",
+    btnLog: "Tampil Log Hapus",
+    btnDialog: "Save",
+    dialogSoftDelete: false,
   }),
 
   methods: {
@@ -209,8 +185,10 @@ export default {
       this.customer.append("alamat", this.form.alamat);
       this.customer.append("tglLahir", this.form.tglLahir);
       this.customer.append("noHp", this.form.noHp);
-      this.customer.append("idPegawaiLog", this.idPegawaiLog);
+      this.customer.append("idPegawaiLog", this.form.idPegawaiLog);
+
       var uri = this.$apiUrl + "customer";
+      this.load = true;
       this.load = true;
       this.$http
         .post(uri, this.customer)
@@ -239,86 +217,89 @@ export default {
       this.customer.append("noHp", this.form.noHp);
       this.customer.append("idPegawaiLog", this.idPegawaiLog);
 
-      var uri = this.$apiUrl + `customer/update/${this.nip}`;
+      var uri = this.$apiUrl + "customer/update/" + this.form.idCustomer;
       this.load = true;
-      this.$http.post(uri, this.customer)
-      .then(response => {
-          this.snackbar = true;
-          this.text = response.data.message;
-          this.color = "green";
-          this.load=false;
+      this.$http
+        .post(uri, this.customer)
+        .then(response => {
+          this.snackbar = true; //mengaktifkan snackbar
+          this.color = "green"; //memberi warna snackbar
+          this.text = response.data.message; //memasukkan pesan kesnackbar
+          this.load = false;
+          this.dialog = false;
+          this.getData(); //mengambil data
+          this.resetForm();
         })
         .catch(error => {
           this.errors = error;
-          this.load=false;
           this.snackbar = true;
-          this.text = error;
+          this.text = "Try Again";
           this.color = "red";
+          this.load = false;
         });
-        this.getData();
     },
 
-    deleteData(idCustomer){ 
-        var uri;
+    deleteData(idCustomer) {
+       var uri;
 
-        if (this.status == 1) {
-          this.customer.append("idPegawaiLog", this.idPegawaiLog);
-          if(confirm('Apakah Anda ingin menghapus Customer ini?'))
-          {
-            this.load=true;
-            uri = this.$apiUrl + `customer/${idCustomer}` ;
-            this.$http.post(uri, this.customer)
-            .then(response => {
-              this.snackbar = true;
-              this.text = response.data.message;
-              this.color = "green";
-              this.getData();
-              this.load = false;
-            })
-            .catch(error => {
-              this.errors = error;
-              this.snackbar = true;
-              this.text = "Try Again";
-              this.color = "red";
-              this.load = false;
-            });
-          }
-          else
-          {
-            this.snackbar = true;
-            this.text = "Data Customer gagal dihapus.";
-            this.color = "red";
-          }
-        } 
-        else 
+      if (this.status == 1) {
+        this.customer.append("idPegawaiLog", this.idPegawaiLog);
+
+        uri = this.$apiUrl + `customer/${idCustomer}` ;
+        if(confirm('Apakah Anda ingin Menghapus Customer ini?'))
         {
-          uri = this.$apiUrl + "customer/" + idCustomer + "/permanen"; //data dihapus berdasarkan id
-          if(confirm('Apakah Anda ingin menghapus Customer ini secara permanen?'))
-          {
-            this.load = true;
-            this.$http.delete(uri)
-            .then(response => {
+          this.load= true;
+          this.$http.post(uri, this.customer)
+          .then(response => {
+            this.snackbar = true;
+            this.text = response.data.message;
+            this.color = "green";
+            this.getData();
+          })
+          .catch(error => {
+            this.errors = error;
+            this.snackbar = true;
+            this.text = "Try Again";
+            this.color = "red";
+          });
+          this.load= false;
+        }
+        else
+        {
+          this.snackbar = true;
+          this.text = "Data Customer gagal dihapus.";
+          this.color = "red";
+        }
+        
+      } 
+      else 
+      {
+        uri = this.$apiUrl + "customer/" + idCustomer + "/permanen"; //data dihapus berdasarkan id
+        if(confirm('Apakah Anda ingin Menghapus Customer ini secara permanen?'))
+        {
+          this.load= true;
+          this.$http.delete(uri)
+          .then(response => {
               this.snackbar = true;
               this.text = response.data.message;
               this.color = "green";
               this.getDataSoftDelete();
-              this.load = false;
             })
             .catch(error => {
               this.errors = error;
               this.snackbar = true;
               this.text = "Try Again";
               this.color = "red";
-              this.load = false;
             });
-          }
-          else
-          {
-            this.snackbar = true;
-            this.text = "Data Customer gagal dihapus permanen.";
-            this.color = "red";
-          }
+            this.load= false;
         }
+        else
+        {
+          this.snackbar = true;
+          this.text = "Data Customer gagal dihapus secara permanen.";
+          this.color = "red";
+        }
+      }
     },
 
     restoreData() {
@@ -328,8 +309,8 @@ export default {
       this.customer.append("noHp", this.form.noHp);
       this.customer.append("idPegawaiLog", this.idPegawaiLog);
 
-      var uri = this.$apiUrl + `customer/${this.nip}/restore`;
-      if(confirm('Apakah Anda ingin memulihkan Layanan ini?'))
+      var uri = this.$apiUrl + `customer/${this.form.idCustomer}/restore`;
+      if(confirm('Apakah Anda ingin memulihkan Customer ini?'))
       {
         this.load = true;
         this.$http
@@ -363,14 +344,13 @@ export default {
       if (this.status == 1) {
         this.typeInput = "edit";
         this.dialog = true;
-        this.nip = item.idCustomer;
+        this.form.idCustomer = item.idCustomer;
         this.form.namaCustomer = item.namaCustomer;
         this.form.alamat = item.alamat;
         this.form.tglLahir = item.tglLahir;
         this.form.noHp = item.noHp;
       } else {
         this.dialogSoftDelete = true;
-        this.nip = item.idCustomer;
         this.form.idCustomer = item.idCustomer;
         this.form.namaCustomer = item.namaCustomer;
         this.form.alamat = item.alamat;
@@ -383,8 +363,7 @@ export default {
       if (this.typeInput === "new") {
         this.sendData();
         this.dialog = false;
-      }
-      else {
+      } else {
         this.updateData();
         this.dialog = false;
         this.typeInput === "new"
@@ -392,36 +371,35 @@ export default {
     },
 
     resetForm() {
-      this.typeInput ='new'
       this.form = {
         namaCustomer: "",
         alamat: "",
         tglLahir: "",
-        noHp: "",
+        noHp:"",
         idPegawaiLog: "Owner"
       };
     },
 
-    deletedCustomer() {
+    setCustomer() {
       if (this.status == 0) {
         this.getData();
         this.status = 1;
         this.judul = "Data Customer";
-        this.namaBtn = "Tampil Log Hapus";
-        this.btn = "Save";
+        this.btnLog = "Tampil Log Hapus";
+        this.btnDialog = "Save";
       } else {
         this.getDataSoftDelete();
         this.status = 0;
-        this.judul = "Daftar Customer Yang Dihapus";
-        this.namaBtn = "Tampil Customer";
-        this.btn = "Restore";
+        this.judul = "Data Customer Yang Dihapus";
+        this.btnLog = "Tampil Customer";
+        this.btnDialog = "Restore";
       }
-    }
+    },
   },
 
   mounted() {
     this.getData();
-    this.idPegawaiLog = this.$session.get('idCustomer');
+    this.idPegawaiLog = this.$session.get('NIP');
   }
 };
 </script>
