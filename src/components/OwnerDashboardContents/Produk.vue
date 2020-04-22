@@ -1,158 +1,163 @@
 <template>
-  <v-container>
-    <v-card width="100%">
-      <v-container grid-list-md mb-0>
-        <h2 class="text-md-center">{{this.judul}}</h2>
-        <v-layout row wrap style="margin:10px">
-          <v-flex xs6>
-            <v-btn
-              depressed
-              dark
-              rounded
-              style="text-transform: none !important;"
-              color="green accent-3"
-              @click="dialog=true"
-              class="mr-4"
-              v-if="status === 1"
-            >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tambah Produk
-            </v-btn>
+  <v-data-table :headers="headers" :items="produks" :search="keyword" :loading="load">
+    <template v-slot:top>
+      <v-toolbar>
+        <v-toolbar-title>{{judul}}</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-spacer />
+        <v-flex xs5 class="text-right">
+          <v-text-field v-model="keyword" append-icon="mdi-search" label="Search" hide-details></v-text-field>
+        </v-flex>
+        <v-spacer />
+        <v-divider class="mx-4" inset vertical></v-divider>
 
-            <v-btn
-              depressed
-              dark
-              rounded
-              style="text-transform: none !important;"
-              color="green accent-3"
-              @click="deletedProduct()"
-            >
-              <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>
-              {{this.namaBtn}}
-            </v-btn>
-          </v-flex>
+        <v-btn
+          depressed
+          dark
+          rounded
+          style="text-transform: none !important;"
+          color="green accent-3"
+          @click="dialog=true"
+          class="mr-4"
+          v-if="status === 1"
+        >
+          <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tambah Produk
+        </v-btn>
 
-          <v-flex xs6 class="text-right">
-            <v-text-field v-model="keyword" append-icon="mdi-search" label="Search" hide-details></v-text-field>
-          </v-flex>
-        </v-layout>
+        <v-btn
+          depressed
+          dark
+          rounded
+          style="text-transform: none !important;"
+          color="green accent-3"
+          @click="deletedProduct()"
+        >
+          <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>
+          {{namaBtn}}
+        </v-btn>
+      </v-toolbar>
 
-        <v-data-table :headers="headers" :items="produks" :search="keyword" :loading="load">
-          <template v-slot:item.gambar="{ item }">
-            <v-img :src="$apiUrl + 'produk/' + item.idProduk + '/gambar'" width="80" height="80"></v-img>
-          </template>
+      <v-dialog v-model="dialog" presistent max-width="400">
+        <v-card>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-rename-box"
+                    label="Nama Produk*"
+                    v-model="form.namaProduk"
+                    required
+                  ></v-text-field>
+                </v-col>
 
-          <template v-slot:item.actions="{ item }">
-            <v-icon color="indigo" class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
-            <v-icon color="error" @click="deleteData(item.idProduk)">mdi-delete</v-icon>
-          </template>
-        </v-data-table>
-      </v-container>
-    </v-card>
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-cash-usd"
+                    label="Harga Produk*"
+                    type="number"
+                    v-model="form.harga"
+                    required
+                  ></v-text-field>
+                </v-col>
 
-    <v-dialog v-model="dialog" presistent max-width="400">
-      <v-card>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-rename-box"
-                  label="Nama Produk*"
-                  v-model="form.namaProduk"
-                  required
-                ></v-text-field>
-              </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-earth-box"
+                    label="Stok*"
+                    type="number"
+                    v-model="form.stok"
+                    required
+                  ></v-text-field>
+                </v-col>
 
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-cash-usd"
-                  label="Harga Produk*"
-                  type="number"
-                  v-model="form.harga"
-                  required
-                ></v-text-field>
-              </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-earth-box"
+                    label="Jumlah Minimal*"
+                    type="number"
+                    v-model="form.jumlahMinimal"
+                    required
+                  ></v-text-field>
+                </v-col>
 
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-earth-box"
-                  label="Stok*"
-                  type="number"
-                  v-model="form.stok"
-                  required
-                ></v-text-field>
-              </v-col>
+                <v-col cols="12">
+                  <v-file-input
+                    label="Gambar Produk"
+                    accept="image/png, image/jpeg, image/bmp"
+                    prepend-icon="mdi-camera"
+                    v-model="form.gambar"
+                    required
+                  ></v-file-input>
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>*indicates required field</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
+            <v-btn color="blue darken-1" text @click="setForm()">{{btn}}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
-              <v-col cols="12">
-                <v-text-field
-                  prepend-icon="mdi-earth-box"
-                  label="Jumlah Minimal*"
-                  type="number"
-                  v-model="form.jumlahMinimal"
-                  required
-                ></v-text-field>
-              </v-col>
+      <v-dialog v-model="dialogSoftDelete" presistent max-width="400">
+        <v-card>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-list-item-content>
+                    <v-img
+                      :src="$apiUrl + 'produk/' + form.idProduk + '/gambar'"
+                      width="80"
+                      height="200"
+                    ></v-img>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>ID Produk: {{ form.idProduk }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Nama Produk: {{ form.namaProduk }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Harga Produk: {{ form.harga }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Stok Produk: {{ form.stok }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Jumlah Minimal Produk: {{ form.jumlahMinimal }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1" text @click="dialogSoftDelete=false, resetForm()">Close</v-btn>
+            <v-btn color="blue darken-1" text @click="restore()">{{btn}}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
+        {{ text }}
+        <v-btn dark text @click="snackbar=false">Close</v-btn>
+      </v-snackbar>
+    </template>
+    <template v-slot:item.gambar="{ item }">
+      <v-img :src="$apiUrl + 'produk/' + item.idProduk + '/gambar'" width="80" height="80"></v-img>
+    </template>
 
-              <v-col cols="12">
-                <v-file-input
-                  label="Gambar Produk"
-                  accept="image/png, image/jpeg, image/bmp"
-                  prepend-icon="mdi-camera"
-                  v-model="form.gambar"
-                  required
-                ></v-file-input>
-              </v-col>
-            </v-row>
-          </v-container>
-          <small>*indicates required field</small>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm()">{{this.btn}}</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="dialogSoftDelete" presistent max-width="400">
-      <v-card>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-list-item-content>
-                  <v-list-item-subtitle>ID Produk: {{ form.idProduk }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Nama Produk: {{ form.namaProduk }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Harga Produk: {{ form.harga }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Stok Produk: {{ form.stok }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-content>
-                  <v-list-item-subtitle>Jumlah Minimal Produk: {{ form.jumlahMinimal }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="dialogSoftDelete=false, resetForm()">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="restore()">{{this.btn}}</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
-      {{ text }}
-      <v-btn dark text @click="snackbar=false">Close</v-btn>
-    </v-snackbar>
-  </v-container>
+    <template v-slot:item.actions="{ item }">
+      <v-icon color="indigo" class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
+      <v-icon color="error" @click="deleteData(item.idProduk)">mdi-delete</v-icon>
+    </template>
+  </v-data-table>
 </template>
+    
+
 <script>
 export default {
   data: () => ({
@@ -218,7 +223,7 @@ export default {
     konfirmasi: false,
     valid: true,
     imageUrl: null,
-    idPegawaiLog:"",
+    idPegawaiLog: ""
   }),
   methods: {
     getData() {
@@ -328,45 +333,59 @@ export default {
       var uri;
       this.produk.append("idPegawaiLog", this.idPegawaiLog);
       if (this.status == 1) {
-        uri = this.$apiUrl + "produk/" + idProduk;
-        this.$http
-        .post(uri,this.produk)
-        .then(response => {
+        if (confirm("Apakah Anda ingin menghapus Produk ini?")) {
+          uri = this.$apiUrl + "produk/" + idProduk;
+          this.$http
+            .post(uri, this.produk)
+            .then(response => {
+              this.snackbar = true;
+              this.text = response.data.message;
+              this.color = "green";
+              if (this.status == 1) {
+                this.getData();
+              } else {
+                this.getDataSoftDelete();
+              }
+            })
+            .catch(error => {
+              this.errors = error;
+              this.snackbar = true;
+              this.text = "Try Again";
+              this.color = "red";
+            });
+        } else {
           this.snackbar = true;
-          this.text = response.data.message;
-          this.color = "green";
-          if (this.status == 1) {
-            this.getData();
-          } else {
-            this.getDataSoftDelete();
-          }
-        })
-        .catch(error => {
-          this.errors = error;
-          this.snackbar = true;
-          this.text = "Try Again";
+          this.text = "Gagal dihapus.";
           this.color = "red";
-        });
+        }
       } else {
-        uri = this.$apiUrl + "produk/" + idProduk + "/permanen"; //data dihapus berdasarkan id
-        this.$http
-        .delete(uri)
-        .then(response => {
+        if (
+          confirm("Apakah Anda ingin menghapus produk ini secara permanen?")
+        ) {
+          uri = this.$apiUrl + "produk/" + idProduk + "/permanen"; //data dihapus berdasarkan id
+          this.$http
+            .delete(uri)
+            .then(response => {
+              this.snackbar = true;
+              this.text = response.data.message;
+              this.color = "green";
+              if (this.status == 1) {
+                this.getData();
+              } else {
+                this.getDataSoftDelete();
+              }
+            })
+            .catch(error => {
+              this.errors = error;
+              this.snackbar = true;
+              this.text = "Try Again";
+              this.color = "red";
+            });
+        } else {
           this.snackbar = true;
-          this.text = response.data.message;
-          this.color = "green";
-          if (this.status == 1) {
-            this.getData();
-          } else {
-            this.getDataSoftDelete();
-          }
-        })
-        .catch(error => {
-          this.errors = error;
-          this.snackbar = true;
-          this.text = "Try Again";
+          this.text = "Gagal dihapus permanen.";
           this.color = "red";
-        });
+        }
       }
     },
 
@@ -399,29 +418,35 @@ export default {
       this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
 
       var uri = this.$apiUrl + `produk/${this.idProduk}/restore`;
-      this.load = true;
-      this.$http
-        .post(uri, this.produk)
-        .then(response => {
-          this.snackbar = true; //mengaktifkan snackbar
-          this.color = "green"; //memberi warna snackbar
-          this.text = response.data.message; //memasukkan pesan ke snackbar
-          this.load = false;
-          this.dialogSoftDelete = false;
-          if (this.status == 0) {
-            this.getDataSoftDelete();
-          } else {
-            this.getData();
-          }
-        })
-        .catch(error => {
-          this.errors = error;
-          this.snackbar = true;
-          this.text = "Try Again";
-          this.color = "red";
-          this.load = false;
-          this.dialogSoftDelete = false;
-        });
+      if (confirm("Apakah Anda ingin memulihkan produk ini?")) {
+        this.load = true;
+        this.$http
+          .post(uri, this.produk)
+          .then(response => {
+            this.snackbar = true; //mengaktifkan snackbar
+            this.color = "green"; //memberi warna snackbar
+            this.text = response.data.message; //memasukkan pesan ke snackbar
+            this.load = false;
+            this.dialogSoftDelete = false;
+            if (this.status == 0) {
+              this.getDataSoftDelete();
+            } else {
+              this.getData();
+            }
+          })
+          .catch(error => {
+            this.errors = error;
+            this.snackbar = true;
+            this.text = "Try Again";
+            this.color = "red";
+            this.load = false;
+            this.dialogSoftDelete = false;
+          });
+      } else {
+        this.snackbar = true;
+        this.text = "Gagal memulihkan produk.";
+        this.color = "red";
+      }
     },
 
     deletedProduct() {
@@ -443,7 +468,7 @@ export default {
 
   mounted() {
     this.getData();
-    this.idPegawaiLog = this.$session.get('NIP');
+    this.idPegawaiLog = this.$session.get("NIP");
   }
 };
 </script>

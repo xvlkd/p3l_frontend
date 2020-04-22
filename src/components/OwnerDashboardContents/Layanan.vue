@@ -141,13 +141,8 @@ export default {
         value: "harga"
       },
       {
-<<<<<<< HEAD
-        text: "Nama Ukuran",
-        value: "idUkuran"
-=======
         text: "Ukuran Hewan",
         value: "namaUkuran"
->>>>>>> e26d096044294135db6698e3e509e74ed25e8c21
       },
       {
         text: "Ditambahkan Oleh",
@@ -159,33 +154,25 @@ export default {
         sortable: false
       }
     ],
-    load:false,
+    load: false,
     layanans: [],
-    ukurans:[],
-    idPegawaiLog:"",
+    ukurans: [],
+    idPegawaiLog: "",
     form: {
-      idLayanan:"",
+      idLayanan: "",
       namaLayanan: "",
       harga: "",
       idUkuran: "",
-      namaUkuran:"",
+      namaUkuran: "",
       idPegawaiLog: "Owner"
     },
     layanan: new FormData(),
     typeInput: "new",
-<<<<<<< HEAD
-    ukurans: [
-      {
-        namaUkuran: ""
-      }
-    ]
-=======
     status: 1,
     judul: "Data Layanan",
     btnLog: "Tampil Log Hapus",
     btnDialog: "Save",
-    dialogSoftDelete: false,
->>>>>>> e26d096044294135db6698e3e509e74ed25e8c21
+    dialogSoftDelete: false
   }),
 
   methods: {
@@ -269,46 +256,43 @@ export default {
     },
 
     deleteData(idLayanan) {
-       var uri;
+      var uri;
 
       if (this.status == 1) {
         this.layanan.append("idPegawaiLog", this.idPegawaiLog);
 
-        uri = this.$apiUrl + `layanan/${idLayanan}` ;
-        if(confirm('Apakah Anda ingin Menghapus Layanan ini?'))
-        {
-          this.load= true;
-          this.$http.post(uri, this.layanan)
-          .then(response => {
-            this.snackbar = true;
-            this.text = response.data.message;
-            this.color = "green";
-            this.getData();
-          })
-          .catch(error => {
-            this.errors = error;
-            this.snackbar = true;
-            this.text = "Try Again";
-            this.color = "red";
-          });
-          this.load= false;
-        }
-        else
-        {
+        uri = this.$apiUrl + `layanan/${idLayanan}`;
+        if (confirm("Apakah Anda ingin Menghapus Layanan ini?")) {
+          this.load = true;
+          this.$http
+            .post(uri, this.layanan)
+            .then(response => {
+              this.snackbar = true;
+              this.text = response.data.message;
+              this.color = "green";
+              this.getData();
+            })
+            .catch(error => {
+              this.errors = error;
+              this.snackbar = true;
+              this.text = "Try Again";
+              this.color = "red";
+            });
+          this.load = false;
+        } else {
           this.snackbar = true;
           this.text = "Data Layanan gagal dihapus.";
           this.color = "red";
         }
-        
-      } 
-      else 
-      {
+      } else {
         uri = this.$apiUrl + "layanan/" + idLayanan + "/permanen"; //data dihapus berdasarkan id
-        if(confirm('Apakah Anda ingin Menghapus Layanan ini secara permanen?'))
-        {
-          this.load= true;
-          this.$http.delete(uri)
-          .then(response => {
+        if (
+          confirm("Apakah Anda ingin Menghapus Layanan ini secara permanen?")
+        ) {
+          this.load = true;
+          this.$http
+            .delete(uri)
+            .then(response => {
               this.snackbar = true;
               this.text = response.data.message;
               this.color = "green";
@@ -320,10 +304,8 @@ export default {
               this.text = "Try Again";
               this.color = "red";
             });
-            this.load= false;
-        }
-        else
-        {
+          this.load = false;
+        } else {
           this.snackbar = true;
           this.text = "Data Layanan gagal dihapus secara permanen.";
           this.color = "red";
@@ -338,30 +320,27 @@ export default {
       this.layanan.append("idPegawaiLog", this.idPegawaiLog);
 
       var uri = this.$apiUrl + `layanan/${this.form.idLayanan}/restore`;
-      if(confirm('Apakah Anda ingin memulihkan Layanan ini?'))
-      {
+      if (confirm("Apakah Anda ingin memulihkan Layanan ini?")) {
         this.load = true;
         this.$http
-        .post(uri, this.layanan)
-        .then(response => {
-          this.snackbar = true; //mengaktifkan snackbar
-          this.color = "green"; //memberi warna snackbar
-          this.text = response.data.message; //memasukkan pesan ke snackbar
-          this.load = false;
-          this.dialogSoftDelete = false;
-          this.getDataSoftDelete();    
-        })
-        .catch(error => {
-          this.errors = error;
-          this.snackbar = true;
-          this.text = "Try Again";
-          this.color = "red";
-          this.load = false;
-          this.dialogSoftDelete = false;
-        });
-      }
-      else
-      {
+          .post(uri, this.layanan)
+          .then(response => {
+            this.snackbar = true; //mengaktifkan snackbar
+            this.color = "green"; //memberi warna snackbar
+            this.text = response.data.message; //memasukkan pesan ke snackbar
+            this.load = false;
+            this.dialogSoftDelete = false;
+            this.getDataSoftDelete();
+          })
+          .catch(error => {
+            this.errors = error;
+            this.snackbar = true;
+            this.text = "Try Again";
+            this.color = "red";
+            this.load = false;
+            this.dialogSoftDelete = false;
+          });
+      } else {
         this.snackbar = true;
         this.text = "Memulihkan data Layanan gagal.";
         this.color = "red";
@@ -375,10 +354,8 @@ export default {
         this.form.idLayanan = item.idLayanan;
         this.form.namaLayanan = item.namaLayanan;
         this.form.harga = item.harga;
-        for (var i=0; i < this.ukurans.length; i++)
-        {
-          if(this.ukurans[i].idUkuran == item.idUkuran)
-          {
+        for (var i = 0; i < this.ukurans.length; i++) {
+          if (this.ukurans[i].idUkuran == item.idUkuran) {
             this.form.idUkuran = this.ukurans[i].idUkuran;
           }
         }
@@ -388,10 +365,8 @@ export default {
         this.form.namaLayanan = item.namaLayanan;
         this.form.namaUkuran = item.namaUkuran;
         this.form.harga = item.harga;
-        for (var i=0; i < this.ukurans.length; i++)
-        {
-          if(this.ukurans[i].idUkuran == item.idUkuran)
-          {
+        for (var i = 0; i < this.ukurans.length; i++) {
+          if (this.ukurans[i].idUkuran == item.idUkuran) {
             this.form.namaUkuran = this.ukurans[i].namaUkuran;
           }
         }
@@ -405,7 +380,7 @@ export default {
       } else {
         this.updateData();
         this.dialog = false;
-        this.typeInput === "new"
+        this.typeInput === "new";
       }
     },
 
@@ -432,13 +407,13 @@ export default {
         this.btnLog = "Tampil Layanan";
         this.btnDialog = "Restore";
       }
-    },
+    }
   },
 
   mounted() {
     this.getData();
     this.getUkuran();
-    this.idPegawaiLog = this.$session.get('NIP');
+    this.idPegawaiLog = this.$session.get("NIP");
   }
 };
 </script>

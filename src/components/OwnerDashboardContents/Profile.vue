@@ -11,9 +11,8 @@
 <script>
 export default {
   data: () => ({
-    nip: sessionStorage.getItem("NIP"),
-    nama: sessionStorage.getItem("Nama"),
-    jabatan: sessionStorage.getItem("Jabatan")
+    nama: "",
+    nama: this.$session.get("Nama")
   })
 };
 </script>

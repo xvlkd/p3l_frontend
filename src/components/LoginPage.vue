@@ -74,13 +74,13 @@ export default {
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
           this.text = response.data.message; //memasukkan pesan kesnackbar
-          
-          this.$session.start()
-          
-          this.$session.set('NIP', response.data.pegawai[0].NIP);
+
+          this.$session.start();
+
+          this.$session.set("NIP", response.data.pegawai[0].NIP);
           this.$session.set("Nama", response.data.pegawai[0].namaPegawai);
           this.$session.set("Jabatan", response.data.pegawai[0].jabatan);
-          
+
           if (this.form.NIP == "Owner") {
             this.$router.push({ name: "OwnerProfile" });
           } else if (this.form.NIP.includes("CS")) {
@@ -90,7 +90,7 @@ export default {
           }
         })
         .catch(error => {
-          console.log('err', error)
+          console.log("err", error);
           this.errors = error;
           this.snackbar = true;
           this.text = "Try Again";

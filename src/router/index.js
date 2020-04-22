@@ -76,6 +76,12 @@ const routes = [{
 			},
 
 			{
+				name: 'ProdukMinimal',
+				path: '/produkMin',
+				component: loadDashboardOWner('ProdukMin')
+			},
+
+			{
 				name: 'Pengadaan',
 				path: '/pengadaan',
 				component: loadDashboardOWner('Pengadaan')

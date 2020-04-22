@@ -88,12 +88,12 @@ export default {
       {
         title: "Pengadaan",
         icon: "mdi-package",
-        to: "/pengadaan"
+        to: "/produkMin"
       }
     ],
     nip: "",
     nama: "",
-    jabatan: "",
+    jabatan: ""
   }),
 
   methods: {
@@ -103,14 +103,12 @@ export default {
     }
   },
 
-  mounted(){
-    if(!this.$session.exists())
-      this.$router.push({ name: "Login Page" });
-    else
-    {
-      this.nip= this.$session.get('NIP');
-      this.nama= this.$session.get("Nama");
-      this.jabatan= this.$session.get("Jabatan");
+  mounted() {
+    if (!this.$session.exists()) this.$router.push({ name: "Login Page" });
+    else {
+      this.nip = this.$session.get("NIP");
+      this.nama = this.$session.get("Nama");
+      this.jabatan = this.$session.get("Jabatan");
     }
   }
 };

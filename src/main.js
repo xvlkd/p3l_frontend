@@ -10,9 +10,9 @@ var options = {
 	persist: true,
 }
 Vue.use(VueEasySession.install, options);
-  
+
 Vue.prototype.$http = Axios;
-//Vue.prototype.$apiUrl = 'http://localhost:8000/api/';
+// Vue.prototype.$apiUrl = 'http://localhost:8000/api/';
 Vue.prototype.$apiUrl = 'https://kouvee.simbahlucu.com/api/'; // hosting
 
 Vue.config.productionTip = false;
