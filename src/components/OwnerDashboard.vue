@@ -14,15 +14,55 @@
 
       <v-divider></v-divider>
       <v-list>
-        <v-list-item v-for="item in items" :key="item.title" link @click="$router.push(item.to)">
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+        <v-list-group prepend-icon="mdi-file-multiple" value="true" no-action>
+          <template v-slot:activator>
+            <v-list-item-title>Data</v-list-item-title>
+          </template>
+          <v-list-item v-for="item in items" :key="item.title" link @click="$router.push(item.to)">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+        <v-divider />
+        <v-list-group prepend-icon="mdi-bank-transfer" no-action>
+          <template v-slot:activator>
+            <v-list-item-title>Transaksi</v-list-item-title>
+          </template>
+          <v-list-item v-for="item in trans" :key="item.title" link @click="$router.push(item.to)">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+        <v-divider />
+        <v-list-group prepend-icon="mdi-alpha-d-circle" no-action>
+          <template v-slot:activator>
+            <v-list-item-title>Detail</v-list-item-title>
+          </template>
+          <v-list-item
+            v-for="item in details"
+            :key="item.title"
+            link
+            @click="$router.push(item.to)"
+          >
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
 
