@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="jenises" :search="keyword" :loading="load">
+  <v-data-table :headers="headers" :items="produks" :search="keyword" :loading="load">
     <template v-slot:top>
       <v-toolbar>
         <v-toolbar-title>{{judul}}</v-toolbar-title>
@@ -21,7 +21,7 @@
           class="mr-4"
           v-if="status === 1"
         >
-          <v-icon size="18" class="mr-2">mdi-pencil-plus</v-icon>Tambah Jenis Hewan
+          <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tambah Produk
         </v-btn>
 
         <v-btn
@@ -30,10 +30,10 @@
           rounded
           style="text-transform: none !important;"
           color="blue accent-3"
-          @click="deletedData()"
+          @click="deletedProduct()"
         >
           <v-icon size="10" class="mr-2">mdi-delete</v-icon>
-          {{btnLog}}
+          {{namaBtn}}
         </v-btn>
       </v-toolbar>
 
@@ -45,10 +45,50 @@
                 <v-col cols="12">
                   <v-text-field
                     prepend-icon="mdi-rename-box"
-                    label="Jenis Hewan*"
-                    v-model="form.namaJenis"
+                    label="Nama Produk*"
+                    v-model="form.namaProduk"
                     required
                   ></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-cash-usd"
+                    label="Harga Produk*"
+                    type="number"
+                    v-model="form.harga"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-earth-box"
+                    label="Stok*"
+                    type="number"
+                    v-model="form.stok"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-text-field
+                    prepend-icon="mdi-earth-box"
+                    label="Jumlah Minimal*"
+                    type="number"
+                    v-model="form.jumlahMinimal"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12">
+                  <v-file-input
+                    label="Gambar Produk"
+                    accept="image/png, image/jpeg, image/bmp"
+                    prepend-icon="mdi-camera"
+                    v-model="form.gambar"
+                    required
+                  ></v-file-input>
                 </v-col>
               </v-row>
             </v-container>
@@ -57,7 +97,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="red darken-1" text @click="dialog=false, resetForm()">Close</v-btn>
-            <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
+            <v-btn color="blue darken-1" text @click="setForm()">{{btn}}</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -69,10 +109,26 @@
               <v-row>
                 <v-col cols="12">
                   <v-list-item-content>
-                    <v-list-item-subtitle>ID Jenis Hewan: {{ form.idJenis }}</v-list-item-subtitle>
+                    <v-img
+                      :src="$apiUrl + 'produk/' + form.idProduk + '/gambar'"
+                      width="80"
+                      height="200"
+                    ></v-img>
                   </v-list-item-content>
                   <v-list-item-content>
-                    <v-list-item-subtitle>Nama Jenis Hewan: {{ form.namaJenis }}</v-list-item-subtitle>
+                    <v-list-item-subtitle>ID Produk: {{ form.idProduk }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Nama Produk: {{ form.namaProduk }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Harga Produk: {{ form.harga }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Stok Produk: {{ form.stok }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-content>
+                    <v-list-item-subtitle>Jumlah Minimal Produk: {{ form.jumlahMinimal }}</v-list-item-subtitle>
                   </v-list-item-content>
                 </v-col>
               </v-row>
@@ -81,22 +137,26 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="red darken-1" text @click="dialogSoftDelete=false, resetForm()">Close</v-btn>
-            <v-btn color="blue darken-1" text @click="restore()">{{btnDialog}}</v-btn>
+            <v-btn color="blue darken-1" text @click="restore()">{{btn}}</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-
       <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
         {{ text }}
         <v-btn dark text @click="snackbar=false">Close</v-btn>
       </v-snackbar>
     </template>
+    <template v-slot:item.gambar="{ item }">
+      <v-img :src="$apiUrl + 'produk/' + item.idProduk + '/gambar'" width="80" height="80"></v-img>
+    </template>
+
     <template v-slot:item.actions="{ item }">
       <v-icon color="indigo" class="mr-2" @click="editHandler(item)">mdi-pencil</v-icon>
-      <v-icon color="error" @click="deleteData(item.idJenis)">mdi-delete</v-icon>
+      <v-icon color="error" @click="deleteData(item.idProduk)">mdi-delete</v-icon>
     </template>
   </v-data-table>
 </template>
+    
 
 <script>
 export default {
@@ -106,12 +166,28 @@ export default {
     keyword: "",
     headers: [
       {
-        text: "ID Jenis",
-        value: "idJenis"
+        text: "ID Produk",
+        value: "idProduk"
       },
       {
-        text: "Nama Jenis Hewan",
-        value: "namaJenis"
+        text: "Nama Produk",
+        value: "namaProduk"
+      },
+      {
+        text: "Gambar Produk",
+        value: "gambar"
+      },
+      {
+        text: "Harga",
+        value: "harga"
+      },
+      {
+        text: "Stok Tersedia",
+        value: "stok"
+      },
+      {
+        text: "Jumlah Minimal",
+        value: "jumlahMinimal"
       },
       {
         text: "Created By",
@@ -123,48 +199,61 @@ export default {
         sortable: false
       }
     ],
-    jenises: [],
+    produks: [],
     snackbar: false,
     color: null,
     text: "",
     load: false,
     form: {
-      namaJenis: "",
+      namaProduk: "",
+      harga: "",
+      stok: "",
+      jumlahMinimal: "",
+      gambar: "",
       idPegawaiLog: "Owner"
     },
-    jenis: new FormData(),
+    produk: new FormData(),
     typeInput: "new",
     errors: "",
     status: 1,
-    judul: "Data Jenis Hewan",
-    btnLog: "Tampil Log Hapus",
-    btnDialog: "Save",
+    judul: "Data Produk",
+    namaBtn: "Tampil Log Hapus",
+    btn: "Save",
     dialogSoftDelete: false,
+    konfirmasi: false,
+    valid: true,
+    imageUrl: null,
     idPegawaiLog: ""
   }),
   methods: {
     getData() {
-      var uri = this.$apiUrl + "jenisHewan";
-      this.$http.get(uri, this.jenis).then(response => {
-        this.jenises = response.data.jenis;
-      });
+      if (status == 0) {
+        var uri = this.$apiUrl + "produk";
+        this.$http.get(uri, this.produk).then(response => {
+          this.produks = response.data.produk;
+        });
+      }
     },
 
     getDataSoftDelete() {
-      var uri = this.$apiUrl + "jenisHewan/softDelete";
-      this.$http.get(uri, this.jenis).then(response => {
-        this.jenises = response.data.jenis;
+      var uri = this.$apiUrl + "produk/softDelete";
+      this.$http.get(uri, this.produk).then(response => {
+        this.produks = response.data.produk;
       });
     },
 
     sendData() {
-      this.jenis.append("namaJenis", this.form.namaJenis);
-      this.jenis.append("idPegawaiLog", this.form.idPegawaiLog);
+      this.produk.append("namaProduk", this.form.namaProduk);
+      this.produk.append("harga", this.form.harga);
+      this.produk.append("stok", this.form.stok);
+      this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
+      this.produk.append("gambar", this.form.gambar);
+      this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + "jenisHewan";
+      var uri = this.$apiUrl + "produk";
       this.load = true;
       this.$http
-        .post(uri, this.jenis)
+        .post(uri, this.produk)
         .then(response => {
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
@@ -187,31 +276,45 @@ export default {
       if (this.status == 1) {
         this.typeInput = "edit";
         this.dialog = true;
-        this.idJenis = item.idJenis;
-        this.form.namaJenis = item.namaJenis;
+        this.idProduk = item.idProduk;
+        this.form.namaProduk = item.namaProduk;
+        this.form.harga = item.harga;
+        this.form.stok = item.stok;
+        this.form.jumlahMinimal = item.jumlahMinimal;
       } else {
         this.dialogSoftDelete = true;
-        this.idJenis = item.idJenis;
-        this.form.idJenis = item.idJenis;
-        this.form.namaJenis = item.namaJenis;
+        this.idProduk = item.idProduk;
+        this.form.idProduk = item.idProduk;
+        this.form.namaProduk = item.namaProduk;
+        this.form.harga = item.harga;
+        this.form.stok = item.stok;
+        this.form.jumlahMinimal = item.jumlahMinimal;
       }
     },
 
     updateData() {
-      this.jenis.append("namaJenis", this.form.namaJenis);
-      this.jenis.append("idPegawaiLog", this.idPegawaiLog);
+      this.produk.append("namaProduk", this.form.namaProduk);
+      this.produk.append("harga", this.form.harga);
+      this.produk.append("stok", this.form.stok);
+      this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
+      this.produk.append("gambar", this.form.gambar);
+      this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + `jenisHewan/update/${this.idJenis}`;
+      var uri = this.$apiUrl + `produk/update/${this.idProduk}`;
       this.load = true;
       this.$http
-        .post(uri, this.jenis)
+        .post(uri, this.produk)
         .then(response => {
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
           this.text = response.data.message; //memasukkan pesan ke snackbar
           this.load = false;
           this.dialog = false;
-          this.getData(); //mengambil data
+          if (this.status == 1) {
+            this.getData();
+          } else {
+            this.getDataSoftDelete();
+          }
           this.resetForm();
           this.typeInput = "new";
         })
@@ -226,20 +329,18 @@ export default {
         });
     },
 
-    deleteData(idJenis) {
+    deleteData(idProduk) {
       var uri;
-      this.jenis.append("idPegawaiLog", this.idPegawaiLog);
+      this.produk.append("idPegawaiLog", this.idPegawaiLog);
       if (this.status == 1) {
-        if (confirm("Apakah Anda ingin menghapus Jenis Hewan ini?")) {
-          this.load = true;
-          uri = this.$apiUrl + "jenisHewan/" + idJenis; //data dihapus berdasarkan id
+        if (confirm("Apakah Anda ingin menghapus Produk ini?")) {
+          uri = this.$apiUrl + "produk/" + idProduk;
           this.$http
-            .post(uri, this.jenis)
+            .post(uri, this.produk)
             .then(response => {
               this.snackbar = true;
               this.text = response.data.message;
               this.color = "green";
-              this.deleteDialog = false;
               if (this.status == 1) {
                 this.getData();
               } else {
@@ -259,19 +360,15 @@ export default {
         }
       } else {
         if (
-          confirm(
-            "Apakah Anda ingin menghapus Jenis Hewan ini secara permanen?"
-          )
+          confirm("Apakah Anda ingin menghapus produk ini secara permanen?")
         ) {
-          this.load = true;
-          uri = this.$apiUrl + "jenisHewan/" + idJenis + "/permanen";
+          uri = this.$apiUrl + "produk/" + idProduk + "/permanen"; //data dihapus berdasarkan id
           this.$http
             .delete(uri)
             .then(response => {
               this.snackbar = true;
               this.text = response.data.message;
               this.color = "green";
-              this.deleteDialog = false;
               if (this.status == 1) {
                 this.getData();
               } else {
@@ -295,6 +392,8 @@ export default {
     setForm() {
       if (this.typeInput === "new") {
         this.sendData();
+      } else if (this.status == 0) {
+        this.restore();
       } else {
         this.updateData();
       }
@@ -302,37 +401,27 @@ export default {
 
     resetForm() {
       this.form = {
-        namaJenis: "",
+        namaProduk: "",
+        harga: "",
+        stok: "",
+        jumlahMinimal: "",
+        gambar: "",
         idPegawaiLog: "Owner"
       };
     },
 
-    deletedData() {
-      if (this.status == 0) {
-        this.getData();
-        this.status = 1;
-        this.judul = "Data Jenis Hewan";
-        this.btnLog = "Tampil Log Hapus";
-        this.btnDialog = "Save";
-      } else {
-        this.getDataSoftDelete();
-        this.status = 0;
-        this.judul = "Data Jenis Hewan Yang Dihapus";
-        this.btnLog = "Tampil Jenis Hewan";
-        this.btnDialog = "Restore";
-      }
-    },
-
     restore() {
-      this.jenis.append("namaJenis", this.form.namaJenis);
-      this.jenis.append("idPegawaiLog", "Owner");
+      this.produk.append("namaProduk", this.form.namaProduk);
+      this.produk.append("harga", this.form.harga);
+      this.produk.append("stok", this.form.stok);
+      this.produk.append("jumlahMinimal", this.form.jumlahMinimal);
+      this.produk.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + `jenisHewan/${this.idJenis}/restore`;
-
-      if (confirm("Apakah Anda ingin memulihkan Jenis Hewan ini?")) {
+      var uri = this.$apiUrl + `produk/${this.idProduk}/restore`;
+      if (confirm("Apakah Anda ingin memulihkan produk ini?")) {
         this.load = true;
         this.$http
-          .post(uri, this.jenis)
+          .post(uri, this.produk)
           .then(response => {
             this.snackbar = true; //mengaktifkan snackbar
             this.color = "green"; //memberi warna snackbar
@@ -355,8 +444,24 @@ export default {
           });
       } else {
         this.snackbar = true;
-        this.text = "Memulihkan data gagal.";
+        this.text = "Gagal memulihkan produk.";
         this.color = "red";
+      }
+    },
+
+    deletedProduct() {
+      if (this.status == 0) {
+        this.getData();
+        this.status = 1;
+        this.judul = "Data Produk";
+        this.namaBtn = "Tampil Log Hapus";
+        this.btn = "Save";
+      } else {
+        this.getDataSoftDelete();
+        this.status = 0;
+        this.judul = "Data Produk Yang Dihapus";
+        this.namaBtn = "Tampil Produk";
+        this.btn = "Restore";
       }
     }
   },
@@ -367,3 +472,5 @@ export default {
   }
 };
 </script>
+
+          

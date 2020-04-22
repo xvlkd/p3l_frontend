@@ -82,7 +82,7 @@ export default {
           this.$session.set("Jabatan", response.data.pegawai[0].jabatan);
 
           if (this.form.NIP == "Owner") {
-            this.$router.push({ name: "OwnerProfile" });
+            this.$router.push({ name: "OwnerPage" });
           } else if (this.form.NIP.includes("CS")) {
             this.$router.push({ name: "CSPage" });
           } else {

@@ -28,12 +28,6 @@ const routes = [{
 		path: '/owner',
 		component: DashboardOwner,
 		children: [{
-				name: 'OwnerProfile',
-				path: '/ownerProfile',
-				component: loadDashboardOWner('Profile'),
-			},
-
-			{
 				name: 'Pegawai',
 				path: '/pegawai',
 				component: loadDashboardOWner('Pegawai'),

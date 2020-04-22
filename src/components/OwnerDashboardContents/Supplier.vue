@@ -29,10 +29,10 @@
           dark
           rounded
           style="text-transform: none !important;"
-          color="green accent-3"
+          color="blue accent-3"
           @click="deletedData()"
         >
-          <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>
+          <v-icon size="10" class="mr-2">mdi-delete</v-icon>
           {{btnLog}}
         </v-btn>
       </v-toolbar>
