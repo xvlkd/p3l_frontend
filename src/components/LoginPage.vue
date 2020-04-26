@@ -20,7 +20,7 @@
                   />
 
                   <v-text-field
-                    label="password"
+                    label="Password"
                     prepend-icon="mdi-lock"
                     v-model="form.kataSandi"
                     required
