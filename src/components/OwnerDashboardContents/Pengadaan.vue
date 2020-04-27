@@ -56,7 +56,7 @@
                     :items="suppliers"
                     item-text="namaSupplier"
                     item-value="idSupplier"
-                    label="ID Supplier*"
+                    label="Supplier*"
                     dense
                     outlined
                     rounded
@@ -98,7 +98,7 @@
               Data Produk
               <div class="form-row" v-for="(detailProduk, index) in detailProduks" :key="index">
                 <v-row>
-                  <v-col cols="4">
+                  <v-col cols="3">
                     <v-autocomplete
                       v-model="detailProduk.idProduk"
                       :items="produks"
@@ -110,6 +110,10 @@
                       outlined
                       rounded
                     ></v-autocomplete>
+                  </v-col>
+
+                  <v-col cols="2">
+                    <v-text-field v-model="detailProduk.satuan" label="Satuan*" outlined rounded></v-text-field>
                   </v-col>
 
                   <v-col cols="2">
@@ -136,7 +140,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="3">
+                  <v-col cols="2">
                     <v-text-field
                       v-model="detailProduk.subtotal"
                       label="Subtotal"
@@ -173,7 +177,7 @@
                   <v-tooltip top>
                     <template v-slot:activator="{ on }">
                       <div v-on="on">
-                        <v-btn color="green" icon fab @click="addRow(), getProduk()">
+                        <v-btn color="green" icon fab @click="addRow()">
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
                       </div>
@@ -181,19 +185,6 @@
                     <span>Tambah Produk</span>
                   </v-tooltip>
                 </v-col>
-
-                <!-- <v-col cols="1" v-if="statusDetail === 0">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <div v-on="on">
-                        <v-btn color="purple" icon fab @click="hitungTotal(), statusDetail=1">
-                          <v-icon>mdi-checkbox-marked</v-icon>
-                        </v-btn>
-                      </div>
-                    </template>
-                    <span>Done</span>
-                  </v-tooltip>
-                </v-col>-->
               </v-row>
             </v-container>
 
@@ -276,18 +267,22 @@ export default {
       idSupplier: "",
       namaSupplier: "",
       statusPengadaan: "",
+      statusCetak: "",
       totalHarga: 0
     },
     detailProduks: [
       {
+        noPO: "",
         idProduk: "",
         namaProduk: "",
         jumlah: 0,
         harga: 0,
-        subtotal: 0
+        subtotal: 0,
+        satuan: ""
       }
     ],
     pengadaan: new FormData(),
+    DTPengadaan: new FormData(),
     typeInput: "new"
   }),
   methods: {
@@ -324,7 +319,6 @@ export default {
       var uri =
         this.$apiUrl + `produk/cari/${this.detailProduks[index].idProduk}`;
       this.$http.get(uri, this.produk).then(response => {
-        this.produks = response.data.produk;
         this.detailProduks[index].harga = response.data.produk[0].harga;
         this.detailProduks[index].subtotal =
           this.detailProduks[index].harga * this.detailProduks[index].jumlah;
@@ -343,11 +337,11 @@ export default {
 
     sendData() {
       var uri = this.$apiUrl + "transaksiPengadaan";
+      this.pengadaan.append("idSupplier", this.form.idSupplier);
       this.load = true;
       this.$http
         .post(uri, this.pengadaan)
         .then(response => {
-          this.sendDtPengadaan();
           this.snackbar = true; //mengaktifkan snackbar
           this.color = "green"; //memberi warna snackbar
           this.text = response.data.status; //memasukkan pesan kesnackbar
@@ -367,21 +361,27 @@ export default {
     },
 
     sendDtPengadaan() {
-      var uri2 = this.$apiUrl + "dtPengadaan";
-
+      var uri = this.$apiUrl + "dtPengadaan";
       for (var i = 0; i < this.detailProduks.length; i++) {
+        this.detailProduks[i].noPO = this.form.noPO;
+        // this.detailProduks.noPO = this.form.noPO;
+        this.DTPengadaan.append("noPO", this.detailProduks[i].noPO);
+        this.DTPengadaan.append("idProduk", this.detailProduks[i].idProduk);
+        this.DTPengadaan.append("jumlah", this.detailProduks[i].jumlah);
+        this.DTPengadaan.append("satuan", this.detailProduks[i].satuan);
+
         this.$http
-          .post(uri, this.detailProduks[i])
+          .post(uri, this.DTPengadaan)
           .then(response => {
             this.snackbar = true; //mengaktifkan snackbar
             this.color = "green"; //memberi warna snackbar
             this.text = response.data.status; //memasukkan pesan kesnackbar
             this.load = false;
             this.dialog = false;
-            this.getData(); //mengambil data
-            this.resetForm();
+            this.getData();
           })
           .catch(error => {
+            console.log("sike nigga u thought");
             this.errors = error;
             this.snackbar = true;
             this.text = "Try Again";
@@ -403,6 +403,13 @@ export default {
           this.form.idSupplier = this.suppliers[i].idSupplier;
         }
       }
+      for (var i = 0; i < this.details.length; i++) {
+        if (this.details[i].noPO == item.noPO) {
+          this.detailProduks[i].idProduk = this.details[i].idProduk;
+          this.detailProduks[i].satuan = this.details[i].satuan;
+          this.detailProduks[i].jumlah = this.details[i].jumlah;
+        }
+      }
     },
 
     updateData() {
@@ -415,16 +422,10 @@ export default {
       this.$http
         .post(uri, this.pengadaan)
         .then(response => {
-          this.snackbar = true; //mengaktifkan snackbar
-          this.color = "green"; //memberi warna snackbar
-          this.text = response.data.status; //memasukkan pesan ke snackbar
-          this.load = false;
-          this.dialog = false;
-          this.getData();
-          this.resetForm();
-          this.typeInput = "new";
+          this.sendDtPengadaan();
         })
         .catch(error => {
+          console.log("sike nigga u thought");
           this.errors = error;
           this.snackbar = true;
           this.text = "Try Again";
@@ -503,9 +504,10 @@ export default {
     addRow() {
       this.detailProduks.push({
         namaProduk: "",
-        jumlah: "",
-        harga: "",
-        subtotal: ""
+        jumlah: 0,
+        harga: 0,
+        subtotal: 0,
+        satuan: ""
       });
     }
   },
