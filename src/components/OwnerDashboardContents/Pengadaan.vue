@@ -28,10 +28,10 @@
           dark
           rounded
           style="text-transform: none !important;"
-          color="green accent-3"
+          color="indigo accent-3"
           @click="produkMin()"
         >
-          <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tampil Produk Minimal
+          <v-icon size="10" class="mr-2">mdi-emoticon-happy</v-icon>Tampil Produk Minimal
         </v-btn>
       </v-toolbar>
 
@@ -76,7 +76,7 @@
                 </v-col>
 
                 <v-col cols="4">
-                  <div v-if="typeInput === 'edit'">
+                  <div>
                     <v-text-field
                       label="Total Harga"
                       v-model.number="form.totalHarga"
@@ -94,7 +94,7 @@
 
             <v-divider />
 
-            <v-container class="mt-4" v-if="typeInput === 'edit'">
+            <v-container class="mt-4">
               Data Produk
               <div class="form-row" v-for="(detailProduk, index) in detailProduks" :key="index">
                 <v-row>
@@ -105,7 +105,7 @@
                       item-text="namaProduk"
                       item-value="idProduk"
                       label="Nama Produk*"
-                      @change="hitungSubTotal(index)"
+                      @change="hitungSubTotal(index),hitungTotal()"
                       required
                       outlined
                       rounded
@@ -159,7 +159,179 @@
                           <v-btn
                             color="red lighten-2"
                             icon
-                            @click="deleteRow(detailProduk), hitungTotal()"
+                            @click="deleteRow(detailProduk), hitungTotal(), deleteDetailProduk(index)"
+                            class="pt-3"
+                          >
+                            <v-icon>mdi-close</v-icon>
+                          </v-btn>
+                        </div>
+                      </template>
+                      <span>Hapus Produk</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+              </div>
+
+              <v-row>
+                <v-col cols="1" v-if="statusDetail === 0" align-end justify-end>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <div v-on="on">
+                        <v-btn color="green" icon fab @click="addRow()">
+                          <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                      </div>
+                    </template>
+                    <span>Tambah Produk</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+            </v-container>
+
+            <v-divider />
+            <div class="mt-4">
+              <small>*indicates required field</small>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="red darken-1"
+              text
+              @click="dialog=false, resetForm(), resetDynamicForm()"
+            >Close</v-btn>
+            <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="dialog2" persistent max width="1200">
+        <v-card>
+          <v-card-text>
+            <v-container>
+              <v-col cols="4">
+                Data Transaksi Pengadaan
+                <v-text-field
+                  class="mt-4"
+                  v-if="typeInput === 'edit'"
+                  v-model="form.noPO"
+                  label="Nomor PO"
+                  outlined
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-row row>
+                <v-col cols="4">
+                  <v-select
+                    :items="suppliers"
+                    item-text="namaSupplier"
+                    item-value="idSupplier"
+                    label="Supplier*"
+                    dense
+                    outlined
+                    rounded
+                    v-model="form.idSupplier"
+                    required
+                  ></v-select>
+                </v-col>
+
+                <v-col cols="4">
+                  <div v-if="typeInput === 'edit'">
+                    Status Pengadaan*
+                    <v-radio-group v-model="form.statusPengadaan" row>
+                      <v-radio label="Belum Datang" value="Belum Datang"></v-radio>
+                      <v-radio label="Sudah Datang" value="Sudah Datang"></v-radio>
+                    </v-radio-group>
+                  </div>
+                </v-col>
+
+                <v-col cols="4">
+                  <div>
+                    <v-text-field
+                      label="Total Harga"
+                      v-model.number="form.totalHarga"
+                      background-color="blue-grey darken-1"
+                      type="number"
+                      prefix="Rp"
+                      readonly
+                      filled
+                      rounded
+                    ></v-text-field>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-container>
+
+            <v-divider />
+
+            <v-container class="mt-4">
+              Data Produk
+              <v-data-table :headers="headers2" :items="itemss" :search="keyword" :loading="load"></v-data-table>
+
+              <div class="form-row" v-for="(detailProduk, index) in detailProduks" :key="index">
+                <v-row>
+                  <v-col cols="3">
+                    <v-autocomplete
+                      v-model="detailProduk.idProduk"
+                      :items="produks"
+                      item-text="namaProduk"
+                      item-value="idProduk"
+                      label="Nama Produk*"
+                      @change="hitungSubTotal(index),hitungTotal()"
+                      required
+                      outlined
+                      rounded
+                    ></v-autocomplete>
+                  </v-col>
+
+                  <v-col cols="2">
+                    <v-text-field v-model="detailProduk.satuan" label="Satuan*" outlined rounded></v-text-field>
+                  </v-col>
+
+                  <v-col cols="2">
+                    <v-text-field
+                      v-model="detailProduk.jumlah"
+                      required
+                      type="number"
+                      label="Jumlah*"
+                      @change="hitungSubTotal(index),hitungTotal()"
+                      clearable
+                      outlined
+                      rounded
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="2">
+                    <v-text-field
+                      v-model="detailProduk.harga"
+                      label="Harga"
+                      readonly
+                      outlined
+                      rounded
+                      prefix="Rp"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="2">
+                    <v-text-field
+                      v-model="detailProduk.subtotal"
+                      label="Subtotal"
+                      number
+                      readonly
+                      outlined
+                      rounded
+                      prefix="Rp"
+                    ></v-text-field>
+                  </v-col>
+
+                  <v-col cols="1" v-if="statusDetail === 0">
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <div v-on="on">
+                          <v-btn
+                            color="red lighten-2"
+                            icon
+                            @click="deleteRow(detailProduk), hitungTotal(), deleteDetailProduk(index)"
                             class="pt-3"
                           >
                             <v-icon>mdi-close</v-icon>
@@ -214,7 +386,7 @@
     <template v-slot:item.actions="{ item }">
       <v-icon color="indigo" @click="editHandler(item)">mdi-pencil</v-icon>
       <v-icon color="error" @click="deleteData(item.noPO)">mdi-delete</v-icon>
-      <v-icon color="teal" @click="print(item)">mdi-printer</v-icon>
+      <v-icon color="teal" @click="print(item.noPO)">mdi-printer</v-icon>
     </template>
   </v-data-table>
 </template>
@@ -224,23 +396,46 @@
 export default {
   data: () => ({
     dialog: false,
+    dialog2: false,
     items: [],
     keyword: "",
     headers: [
       {
         text: "No. PO",
-        value: "noPO"
+        value: "noPO",
+        sortable: false
       },
       {
         text: "Tanggal Pengadaan",
-        value: "tglPengadaan"
+        value: "tglPengadaan",
+        sortable: false
       },
       {
         text: "Supplier",
-        value: "namaSupplier"
+        value: "namaSupplier",
+        sortable: false
       },
       {
-        text: "Total Harga",
+        text: "Subtotal",
+        value: "subtotal",
+        sortable: false
+      }
+    ],
+    headers2: [
+      {
+        text: "Nama Produk",
+        value: "namaProduk"
+      },
+      {
+        text: "Satuan",
+        value: "satuan"
+      },
+      {
+        text: "Jumlah",
+        value: "jumlah"
+      },
+      {
+        text: "",
         value: "totalHarga"
       },
       {
@@ -281,6 +476,7 @@ export default {
         satuan: ""
       }
     ],
+    temp: [],
     pengadaan: new FormData(),
     DTPengadaan: new FormData(),
     typeInput: "new"
@@ -342,14 +538,7 @@ export default {
       this.$http
         .post(uri, this.pengadaan)
         .then(response => {
-          this.snackbar = true; //mengaktifkan snackbar
-          this.color = "green"; //memberi warna snackbar
-          this.text = response.data.status; //memasukkan pesan kesnackbar
-          this.load = false;
-          this.dialog = false;
-          this.getData(); //mengambil data
-          this.resetForm();
-          this.resetDynamicForm();
+          this.sendDtPengadaan();
         })
         .catch(error => {
           this.errors = error;
@@ -361,11 +550,18 @@ export default {
     },
 
     sendDtPengadaan() {
-      var uri = this.$apiUrl + "dtPengadaan";
+      var uri;
+      var noPO = this.form.noPO;
       for (var i = 0; i < this.detailProduks.length; i++) {
-        this.detailProduks[i].noPO = this.form.noPO;
-        // this.detailProduks.noPO = this.form.noPO;
-        this.DTPengadaan.append("noPO", this.detailProduks[i].noPO);
+        if (this.typeInput == "edit") {
+          if (this.cek(noPO, this.detailProduks[i].idProduk) == 1)
+            uri = this.$apiUrl + "dtPengadaan/update";
+          else uri = this.$apiUrl + "dtPengadaan";
+        } else {
+          uri = this.$apiUrl + "dtPengadaan";
+        }
+
+        this.DTPengadaan.append("noPO", noPO);
         this.DTPengadaan.append("idProduk", this.detailProduks[i].idProduk);
         this.DTPengadaan.append("jumlah", this.detailProduks[i].jumlah);
         this.DTPengadaan.append("satuan", this.detailProduks[i].satuan);
@@ -373,6 +569,7 @@ export default {
         this.$http
           .post(uri, this.DTPengadaan)
           .then(response => {
+            console.log(this.detailProduks.noPO);
             this.snackbar = true; //mengaktifkan snackbar
             this.color = "green"; //memberi warna snackbar
             this.text = response.data.status; //memasukkan pesan kesnackbar
@@ -391,6 +588,15 @@ export default {
       }
     },
 
+    cek($noPO, $idP) {
+      for (var i = 0; i < this.details.length; i++) {
+        if (this.details[i].noPO == $noPO) {
+          if (this.details[i].idProduk == $idP) return 1;
+        }
+      }
+      return 0;
+    },
+
     editHandler(item) {
       this.typeInput = "edit";
       this.dialog = true;
@@ -403,11 +609,13 @@ export default {
           this.form.idSupplier = this.suppliers[i].idSupplier;
         }
       }
+      // this.detailProduks = [];
       for (var i = 0; i < this.details.length; i++) {
         if (this.details[i].noPO == item.noPO) {
-          this.detailProduks[i].idProduk = this.details[i].idProduk;
-          this.detailProduks[i].satuan = this.details[i].satuan;
-          this.detailProduks[i].jumlah = this.details[i].jumlah;
+          this.details[i].subtotal =
+            this.details[i].jumlah * this.details[i].harga;
+          this.details[i].idProduk = this.details[i].idProduk;
+          this.detailProduks.push(this.details[i]);
         }
       }
     },
@@ -462,6 +670,31 @@ export default {
       }
     },
 
+    deleteDetailProduk(index) {
+      var uri = this.$apiUrl + "dtPengadaan";
+      var noPO = this.form.noPO;
+
+      var idProduk = this.detailProduks[index].idProduk;
+      console.log(idProduk);
+
+      this.DTPengadaan.append("noPO", noPO);
+      this.DTPengadaan.append("idProduk", idProduk);
+      this.$http
+        .delete(uri, this.DTPengadaan)
+        .then(response => {
+          this.snackbar = true;
+          this.text = response.data.status;
+          this.color = "green";
+          this.getData();
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+        });
+    },
+
     setForm() {
       if (this.typeInput === "new") {
         this.sendData();
@@ -485,20 +718,35 @@ export default {
       while (this.detailProduks.length != 0) {
         for (var i = 0; i < this.detailProduks.length; i++) {
           this.detailProduks.splice(this.detailProduks[i], 1);
+          this.temp.push(this.detailProduks[i]);
+          console.log(this.temp);
         }
       }
     },
 
-    produkMin() {
+    produkMin(noPO) {
       this.$router.push({ name: "ProdukMinimal" });
     },
 
-    print() {
-      this.status = 1;
+    print(noPO) {
+      var uri = this.$apiUrl + "transaksiPengadaan/cetak/" + noPO;
+      this.pengadaan.append("statusCetak", "Sudah Dicetak");
+      this.$http
+        .get(uri, this.pengadaan)
+        .then(response => {
+          this.getData();
+        })
+        .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
+        });
     },
 
     deleteRow(index) {
-      this.detailProduks.splice(this.detailProduks.indexOf(index), 1);
+      this.detailProduks.splice(index, 1);
+      // this.deleteDetailProduk(index);
     },
 
     addRow() {

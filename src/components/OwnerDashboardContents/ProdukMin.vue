@@ -16,11 +16,11 @@
           dark
           rounded
           style="text-transform: none !important;"
-          color="green accent-3"
+          color="indigo accent-3"
           @click="pengadaan()"
           class="mr-4"
         >
-          <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tampil Pengadaan
+          <v-icon size="10" class="mr-2">mdi-emoticon-happy</v-icon>Tampil Pengadaan
         </v-btn>
       </v-toolbar>
     </template>

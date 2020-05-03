@@ -15,6 +15,10 @@ function loadDashboardCS(view) {
 	return () => import(`../components/CSDashboardContents/${view}.vue`);
 }
 
+function loadDashboardKasir(view) {
+	return () => import(`../components/KasirDashboardContents/${view}.vue`);
+}
+
 Vue.use(Router);
 
 const routes = [{
@@ -104,7 +108,17 @@ const routes = [{
 		name: 'KasirPage',
 		path: '/kasir',
 		component: DashboardKasir,
-
+		children: [{
+				name: 'Transaksi Produk',
+				path: '/transaksiProduk',
+				component: loadDashboardKasir('TransaksiProduk')
+			},
+			{
+				name: 'Transaksi Layanan',
+				path: '/transaksiLayanan',
+				component: loadDashboardKasir('TransaksiLayanan')
+			},
+		]
 	}
 ];
 

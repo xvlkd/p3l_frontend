@@ -33,7 +33,12 @@
           <template v-slot:activator>
             <v-list-item-title>Transaksi</v-list-item-title>
           </template>
-          <v-list-item v-for="item in trans" :key="item.title" link @click="$router.push(item.to)">
+          <v-list-item
+            v-for="item in transaksi"
+            :key="item.title"
+            link
+            @click="$router.push(item.to)"
+          >
             <v-list-item-icon>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-icon>
@@ -124,13 +129,16 @@ export default {
         title: "Ukuran Hewan",
         icon: "mdi-size-xxl",
         to: "/ukuranHewan"
-      },
+      }
+    ],
+    transaksi: [
       {
         title: "Pengadaan",
         icon: "mdi-package",
         to: "/produkMin"
       }
     ],
+    details: [],
     nip: "",
     nama: "",
     jabatan: ""
