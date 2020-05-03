@@ -35,7 +35,8 @@
         </v-btn>
       </v-toolbar>
 
-      <v-dialog v-model="dialog" persistent max width="1200">
+      <v-dialog v-model="dialog" hide-overlay max width="1200">
+        <!-- persistent -->
         <v-card>
           <v-card-text>
             <v-container>
@@ -152,7 +153,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="1" v-if="statusDetail === 0">
+                  <v-col cols="1">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <div v-on="on">
@@ -171,9 +172,33 @@
                   </v-col>
                 </v-row>
               </div>
+              <!-- <v-data-table :headers="headers2" :items="itemss" :search="keyword" :loading="load">
+                <template v-slot:body="{ items }">
+                  <tbody>
+                    <tr v-for="(item,index) in items" :key="item.idProduk">
+                      <td>{{index+1}}</td>
+                      <td>{{item.namaProduk}}</td>
+
+                      <td>{{item.jumlah}}</td>
+
+                      <td>{{item.satuan}}</td>
+
+                      <td>{{item.subTotal}}</td>
+                      <td>
+                        <v-btn icon color="indigo" light @click="editHandler2(item)">
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                        <v-btn icon color="error" light @click="deleteDetailProduk(item)">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-data-table>-->
 
               <v-row>
-                <v-col cols="1" v-if="statusDetail === 0" align-end justify-end>
+                <v-col cols="1" align-end justify-end>
                   <v-tooltip top>
                     <template v-slot:activator="{ on }">
                       <div v-on="on">
@@ -205,177 +230,69 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="dialog2" persistent max width="1200">
-        <v-card>
-          <v-card-text>
-            <v-container>
-              <v-col cols="4">
-                Data Transaksi Pengadaan
-                <v-text-field
-                  class="mt-4"
-                  v-if="typeInput === 'edit'"
-                  v-model="form.noPO"
-                  label="Nomor PO"
-                  outlined
-                  readonly
-                ></v-text-field>
-              </v-col>
-              <v-row row>
-                <v-col cols="4">
-                  <v-select
-                    :items="suppliers"
-                    item-text="namaSupplier"
-                    item-value="idSupplier"
-                    label="Supplier*"
-                    dense
-                    outlined
-                    rounded
-                    v-model="form.idSupplier"
-                    required
-                  ></v-select>
-                </v-col>
+      <!-- <v-card> -->
+      <!-- <v-dialog v-model="dialog2" hide-overlay persistent max width="1200">
+        <v-row>
+          <v-col cols="3">
+            <v-autocomplete
+              v-model="form2.idProduk"
+              :items="produks"
+              item-text="namaProduk"
+              item-value="idProduk"
+              label="Nama Produk*"
+              required
+              outlined
+              rounded
+            ></v-autocomplete>
+          </v-col>
 
-                <v-col cols="4">
-                  <div v-if="typeInput === 'edit'">
-                    Status Pengadaan*
-                    <v-radio-group v-model="form.statusPengadaan" row>
-                      <v-radio label="Belum Datang" value="Belum Datang"></v-radio>
-                      <v-radio label="Sudah Datang" value="Sudah Datang"></v-radio>
-                    </v-radio-group>
-                  </div>
-                </v-col>
+          <v-col cols="2">
+            <v-text-field v-model="form2.satuan" label="Satuan*" outlined rounded></v-text-field>
+          </v-col>
 
-                <v-col cols="4">
-                  <div>
-                    <v-text-field
-                      label="Total Harga"
-                      v-model.number="form.totalHarga"
-                      background-color="blue-grey darken-1"
-                      type="number"
-                      prefix="Rp"
-                      readonly
-                      filled
-                      rounded
-                    ></v-text-field>
-                  </div>
-                </v-col>
-              </v-row>
-            </v-container>
+          <v-col cols="2">
+            <v-text-field
+              v-model="form2.jumlah"
+              required
+              type="number"
+              label="Jumlah*"
+              clearable
+              outlined
+              rounded
+            ></v-text-field>
+          </v-col>
 
-            <v-divider />
+          <v-col cols="2">
+            <v-text-field v-model="form2.harga" label="Harga" readonly outlined rounded prefix="Rp"></v-text-field>
+          </v-col>
 
-            <v-container class="mt-4">
-              Data Produk
-              <v-data-table :headers="headers2" :items="itemss" :search="keyword" :loading="load"></v-data-table>
+          <v-col cols="2">
+            <v-text-field
+              v-model="form2.subtotal"
+              label="Subtotal"
+              number
+              readonly
+              outlined
+              rounded
+              prefix="Rp"
+            ></v-text-field>
+          </v-col>
 
-              <div class="form-row" v-for="(detailProduk, index) in detailProduks" :key="index">
-                <v-row>
-                  <v-col cols="3">
-                    <v-autocomplete
-                      v-model="detailProduk.idProduk"
-                      :items="produks"
-                      item-text="namaProduk"
-                      item-value="idProduk"
-                      label="Nama Produk*"
-                      @change="hitungSubTotal(index),hitungTotal()"
-                      required
-                      outlined
-                      rounded
-                    ></v-autocomplete>
-                  </v-col>
-
-                  <v-col cols="2">
-                    <v-text-field v-model="detailProduk.satuan" label="Satuan*" outlined rounded></v-text-field>
-                  </v-col>
-
-                  <v-col cols="2">
-                    <v-text-field
-                      v-model="detailProduk.jumlah"
-                      required
-                      type="number"
-                      label="Jumlah*"
-                      @change="hitungSubTotal(index),hitungTotal()"
-                      clearable
-                      outlined
-                      rounded
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="2">
-                    <v-text-field
-                      v-model="detailProduk.harga"
-                      label="Harga"
-                      readonly
-                      outlined
-                      rounded
-                      prefix="Rp"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="2">
-                    <v-text-field
-                      v-model="detailProduk.subtotal"
-                      label="Subtotal"
-                      number
-                      readonly
-                      outlined
-                      rounded
-                      prefix="Rp"
-                    ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="1" v-if="statusDetail === 0">
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <div v-on="on">
-                          <v-btn
-                            color="red lighten-2"
-                            icon
-                            @click="deleteRow(detailProduk), hitungTotal(), deleteDetailProduk(index)"
-                            class="pt-3"
-                          >
-                            <v-icon>mdi-close</v-icon>
-                          </v-btn>
-                        </div>
-                      </template>
-                      <span>Hapus Produk</span>
-                    </v-tooltip>
-                  </v-col>
-                </v-row>
-              </div>
-
-              <v-row>
-                <v-col cols="1" v-if="statusDetail === 0" align-end justify-end>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <div v-on="on">
-                        <v-btn color="green" icon fab @click="addRow()">
-                          <v-icon>mdi-plus</v-icon>
-                        </v-btn>
-                      </div>
-                    </template>
-                    <span>Tambah Produk</span>
-                  </v-tooltip>
-                </v-col>
-              </v-row>
-            </v-container>
-
-            <v-divider />
-            <div class="mt-4">
-              <small>*indicates required field</small>
-            </div>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="red darken-1"
-              text
-              @click="dialog=false, resetForm(), resetDynamicForm()"
-            >Close</v-btn>
-            <v-btn color="blue darken-1" text @click="setForm()">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+          <v-col cols="1">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <div v-on="on">
+                  <v-btn color="red lighten-2" icon @click="dialog2=false" class="pt-3">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </div>
+              </template>
+              <span>Close</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
+      </v-dialog>-->
+      <!-- </v-card> -->
 
       <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
         {{ text }}
@@ -387,6 +304,7 @@
       <v-icon color="indigo" @click="editHandler(item)">mdi-pencil</v-icon>
       <v-icon color="error" @click="deleteData(item.noPO)">mdi-delete</v-icon>
       <v-icon color="teal" @click="print(item.noPO)">mdi-printer</v-icon>
+      <!-- <v-icon color="teal" @click="getDetailByPO(item)">mdi-pencil</v-icon> -->
     </template>
   </v-data-table>
 </template>
@@ -402,40 +320,18 @@ export default {
     headers: [
       {
         text: "No. PO",
-        value: "noPO",
-        sortable: false
+        value: "noPO"
       },
       {
         text: "Tanggal Pengadaan",
-        value: "tglPengadaan",
-        sortable: false
+        value: "tglPengadaan"
       },
       {
         text: "Supplier",
-        value: "namaSupplier",
-        sortable: false
+        value: "namaSupplier"
       },
       {
-        text: "Subtotal",
-        value: "subtotal",
-        sortable: false
-      }
-    ],
-    headers2: [
-      {
-        text: "Nama Produk",
-        value: "namaProduk"
-      },
-      {
-        text: "Satuan",
-        value: "satuan"
-      },
-      {
-        text: "Jumlah",
-        value: "jumlah"
-      },
-      {
-        text: "",
+        text: "Total Harga",
         value: "totalHarga"
       },
       {
@@ -448,15 +344,47 @@ export default {
         sortable: false
       }
     ],
+    // headers2: [
+    //   {
+    //     text: "No.",
+    //     value: "no",
+    //     sortable: false
+    //   },
+    //   {
+    //     text: "Nama Produk",
+    //     value: "namaProduk",
+    //     sortable: false
+    //   },
+    //   {
+    //     text: "Satuan",
+    //     value: "satuan",
+    //     sortable: false
+    //   },
+    //   {
+    //     text: "Jumlah",
+    //     value: "jumlah",
+    //     sortable: false
+    //   },
+    //   {
+    //     text: "Sub Total",
+    //     value: "subTotal",
+    //     sortable: false
+    //   },
+    //   {
+    //     text: "Aksi",
+    //     value: "aksi",
+    //     sortable: false
+    //   }
+    // ],
     pengadaans: [],
     suppliers: [],
     produks: [],
     details: [],
+    itemss: [],
     snackbar: false,
     color: null,
     text: "",
     status: 0,
-    statusDetail: 0,
     load: false,
     form: {
       idSupplier: "",
@@ -464,6 +392,13 @@ export default {
       statusPengadaan: "",
       statusCetak: "",
       totalHarga: 0
+    },
+    form2: {
+      idProduk: "",
+      namaProduk: "",
+      jumlah: "",
+      satuan: "",
+      subtotal: 0
     },
     detailProduks: [
       {
@@ -499,7 +434,7 @@ export default {
 
     getProduk() {
       var uri = this.$apiUrl + "produk/minimal";
-      this.$http.get(uri, this.produk).then(response => {
+      this.$http.get(uri).then(response => {
         this.produks = response.data.produk;
       });
     },
@@ -509,6 +444,15 @@ export default {
       this.$http.get(uri).then(response => {
         this.details = response.data.DTPengadaan;
       });
+    },
+
+    getDetailByPO(item) {
+      this.form.noPO = item.noPO;
+      var uri = this.$apiUrl + "dtPengadaan/tampil/" + item.noPO;
+      this.$http.get(uri).then(response => {
+        this.itemss = response.data.DTPengadaan;
+      });
+      this.dialog = true;
     },
 
     hitungSubTotal(index) {
@@ -598,6 +542,7 @@ export default {
     },
 
     editHandler(item) {
+      // this.getDetailByPO(item);
       this.typeInput = "edit";
       this.dialog = true;
       this.noPO = item.noPO;
@@ -618,6 +563,27 @@ export default {
           this.detailProduks.push(this.details[i]);
         }
       }
+    },
+
+    editHandler2(item) {
+      this.typeInput = "edit";
+      this.dialog = false;
+      this.dialog2 = true;
+      this.form2.idProduk = item.idProduk;
+      this.form2.namaProduk = item.namaProduk;
+      this.form2.satuan = item.satuan;
+      this.form2.jumlah = item.jumlah;
+      this.form2.subtotal = item.subtotal;
+
+      // this.detailProduks = [];
+      // for (var i = 0; i < this.details.length; i++) {
+      //   if (this.details[i].noPO == item.noPO) {
+      //     this.details[i].subtotal =
+      //       this.details[i].jumlah * this.details[i].harga;
+      //     this.details[i].idProduk = this.details[i].idProduk;
+      //     this.detailProduks.push(this.details[i]);
+      //   }
+      // }
     },
 
     updateData() {
@@ -673,9 +639,7 @@ export default {
     deleteDetailProduk(index) {
       var uri = this.$apiUrl + "dtPengadaan";
       var noPO = this.form.noPO;
-
-      var idProduk = this.detailProduks[index].idProduk;
-      console.log(idProduk);
+      var idProduk = this.form2.idProduk;
 
       this.DTPengadaan.append("noPO", noPO);
       this.DTPengadaan.append("idProduk", idProduk);
@@ -705,7 +669,7 @@ export default {
 
     resetForm() {
       this.typeInput = "new";
-      this.statusDetail = 0;
+
       this.form = {
         idSupplier: "",
         namaSupplier: "",
@@ -730,9 +694,8 @@ export default {
 
     print(noPO) {
       var uri = this.$apiUrl + "transaksiPengadaan/cetak/" + noPO;
-      this.pengadaan.append("statusCetak", "Sudah Dicetak");
       this.$http
-        .get(uri, this.pengadaan)
+        .get(uri)
         .then(response => {
           this.getData();
         })
@@ -771,23 +734,5 @@ export default {
 </script>
 
 
-<style scoped>
-.flex {
-  display: flex;
-}
-
-/* .custom-placeholer-color input::placeholder {
-  color: red!important;
-  opacity: 1;
-} */
-
-.custom-label-color .v-label {
-  color: black;
-  opacity: 1;
-}
-
-/* .custom-placeholer-color input,
-.custom-label-color input{
-  color: blue!important;
-} */
+<style lang="css" scoped>
 </style>
