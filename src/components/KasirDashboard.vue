@@ -58,12 +58,12 @@ export default {
       {
         title: "Transaksi Produk",
         icon: "mdi-account-box-multiple",
-        to: "/transaksiProduk"
+        to: "/bayarProduk"
       },
       {
         title: "Transaksi Layanan",
         icon: "mdi-dog-service",
-        to: "/transaksiLayanan"
+        to: "/bayarLayanan"
       }
     ],
     nip: "",

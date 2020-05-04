@@ -24,7 +24,7 @@
         </v-btn>
       </v-toolbar>
 
-      <v-dialog v-model="dialog" persistent max fullscreen>
+      <v-dialog v-model="dialog" persistent max width="1200">
         <v-card>
           <v-card-text>
             <v-container>
@@ -42,20 +42,6 @@
 
               <v-row row>
                 <v-col cols="4">
-                  <v-select
-                    :items="pegawais"
-                    item-text="namaPegawai"
-                    item-value="NIP"
-                    label="Kasir*"
-                    dense
-                    outlined
-                    rounded
-                    v-model="form.idKasir"
-                    required
-                  ></v-select>
-                </v-col>
-
-                <v-col cols="4">
                   <div v-if="typeInput === 'edit'">
                     Status Pembayaran*
                     <v-radio-group v-model="form.statusPembayaran" row>
@@ -65,10 +51,10 @@
                   </div>
                 </v-col>
 
-                <v-col cols="4">
+                <v-col cols="4" v-if="typeInput==='edit'">
                   <v-text-field
                     label="Total Harga"
-                    v-model.number="form.totalHarga"
+                    v-model.number="form.totalBiaya"
                     background-color="blue-grey darken-1"
                     prefix="Rp"
                     readonly
@@ -110,7 +96,7 @@
 
             <v-divider />
 
-            <v-container class="mt-4">
+            <v-container class="mt-4" v-if="typeInput==='edit'">
               Data Produk
               <div
                 class="form-row"
@@ -293,7 +279,7 @@ export default {
       namaCS: "",
       idKasir: "",
       namaKasir: "",
-      totalHarga: 0,
+      totalBiaya: 0,
       membership: ""
     },
     detailTransaksis: [
@@ -310,7 +296,7 @@ export default {
     transaksi: new FormData(),
     DTTransaksi: new FormData(),
     typeInput: "new",
-    statusMember: 1
+    statusMember: 0
   }),
   methods: {
     getData() {
@@ -342,6 +328,13 @@ export default {
       });
     },
 
+    getDetailProduk() {
+      var uri = this.$apiUrl + "dtProduk";
+      this.$http.get(uri).then(response => {
+        this.details = response.data.DTProduk;
+      });
+    },
+
     hitungSubTotal(index) {
       var uri =
         this.$apiUrl + `produk/cari/${this.detailTransaksis[index].idProduk}`;
@@ -354,30 +347,41 @@ export default {
     },
 
     hitungTotal() {
-      this.form.totalHarga = 0;
+      this.form.totalBiaya = 0;
       for (var i = 0; i < this.detailTransaksis.length; i++) {
         parseInt(
-          (this.form.totalHarga =
-            this.form.totalHarga + this.detailTransaksis[i].subtotal)
+          (this.form.totalBiaya =
+            this.form.totalBiaya + this.detailTransaksis[i].subtotal)
         );
       }
     },
 
     sendData() {
-      var uri = this.$apiUrl + "transaksiPengadaan";
-      this.transaksi.append("idSupplier", this.form.idSupplier);
+      var uri = this.$apiUrl + "transaksiProduk";
+      if (this.statusMember == 1) {
+        this.transaksi.append("idCustomer", this.form.idCustomer);
+      }
+      this.transaksi.append("idCustomerService", this.idCS);
+      this.transaksi.append("totalBiaya", this.form.totalBiaya);
       this.load = true;
       this.$http
         .post(uri, this.transaksi)
         .then(response => {
-          this.sendDtTransaksi();
+          if (typeInput === "new") {
+            this.snackbar = true; //mengaktifkan snackbar
+            this.color = "green"; //memberi warna snackbar
+            this.text = response.data.status; //memasukkan pesan kesnackbar
+            this.load = false;
+            this.dialog = false;
+            this.getData();
+          } else {
+            this.sendDtPengadaan();
+          }
         })
         .catch(error => {
-          this.errors = error;
-          this.snackbar = true;
-          this.text = "Try Again";
-          this.color = "red";
           this.load = false;
+          this.dialog = false;
+          this.getData();
         });
     },
 
@@ -432,13 +436,14 @@ export default {
       this.dialog = true;
       this.noTransaksi = item.noTransaksi;
       this.form.noTransaksi = item.noTransaksi;
-      this.form.statusPengadaan = item.statusPengadaan;
-      this.form.totalHarga = item.totalHarga;
-      for (var i = 0; i < this.suppliers.length; i++) {
-        if (this.suppliers[i].idSupplier == item.idSupplier) {
-          this.form.idSupplier = this.suppliers[i].idSupplier;
+      this.form.statusPembayaran = item.statusPembayaran;
+      this.form.totalBiaya = item.totalBiaya;
+      for (var i = 0; i < this.customers.length; i++) {
+        if (this.customers[i].idCustomer == item.idCustomer) {
+          this.form.idCustomer = this.customers[i].idCustomer;
         }
       }
+      this.detailTransaksis = [];
       for (var i = 0; i < this.details.length; i++) {
         if (this.details[i].noTransaksi == item.noTransaksi) {
           this.details[i].subtotal =
@@ -450,11 +455,11 @@ export default {
     },
 
     updateData() {
-      this.transaksi.append("idSupplier", this.form.idSupplier);
-      this.transaksi.append("statusPengadaan", this.form.statusPengadaan);
-      this.transaksi.append("totalHarga", this.form.totalHarga);
+      this.transaksi.append("idCustomer", this.form.idCustomer);
+      this.transaksi.append("idCustomerService", this.idCS);
+      this.transaksi.append("totalBiaya", this.form.totalBiaya);
 
-      var uri = this.$apiUrl + `transaksiPengadaan/${this.noTransaksi}`;
+      var uri = this.$apiUrl + `transaksiProduk/${this.noTransaksi}`;
       this.load = true;
       this.$http
         .post(uri, this.transaksi)
@@ -475,8 +480,8 @@ export default {
     deleteData(noTransaksi) {
       var uri;
 
-      if (confirm("Apakah Anda ingin menghapus Pengadaan ini?")) {
-        uri = this.$apiUrl + "transaksiPengadaan/" + noTransaksi;
+      if (confirm("Apakah Anda ingin menghapus Transaksi ini?")) {
+        uri = this.$apiUrl + "transaksiProduk/" + noTransaksi;
         this.$http
           .delete(uri, this.transaksi)
           .then(response => {
@@ -533,10 +538,16 @@ export default {
       this.typeInput = "new";
 
       this.form = {
-        idSupplier: "",
-        namaSupplier: "",
-        statusPengadaan: "",
-        totalHarga: 0
+        noTransaksi: "",
+        idCustomer: "",
+        namaCustomer: "",
+        statusPembayaran: "",
+        idCS: "",
+        namaCS: "",
+        idKasir: "",
+        namaKasir: "",
+        totalBiaya: 0,
+        membership: ""
       };
     },
 
@@ -568,7 +579,8 @@ export default {
     this.getKasir();
     this.getProduk();
     this.getCustomer();
-    // this.idCS = this.$session.get("NIP");
+    this.getDetailProduk();
+    this.idCS = this.$session.get("NIP");
   }
 };
 </script>

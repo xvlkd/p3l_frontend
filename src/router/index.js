@@ -118,17 +118,16 @@ const routes = [{
 		name: 'KasirPage',
 		path: '/kasir',
 		component: DashboardKasir,
-		children: [
-			// {
-			// 	name: 'Transaksi Produk',
-			// 	path: '/transaksiProduk',
-			// 	component: loadDashboardKasir('TransaksiProduk')
-			// },
-			// {
-			// 	name: 'Transaksi Layanan',
-			// 	path: '/transaksiLayanan',
-			// 	component: loadDashboardKasir('TransaksiLayanan')
-			// },
+		children: [{
+				name: 'Pembayaran Produk',
+				path: '/bayarProduk',
+				component: loadDashboardKasir('BayarProduk')
+			},
+			{
+				name: 'Pembayaran Layanan',
+				path: '/bayarLayanan',
+				component: loadDashboardKasir('BayarLayanan')
+			},
 		]
 	}
 ];
