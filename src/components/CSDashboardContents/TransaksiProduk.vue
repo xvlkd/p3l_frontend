@@ -1,8 +1,8 @@
 <template>
-  <v-data-table :headers="headers" :items="pengadaans" :search="keyword" :loading="load">
+  <v-data-table :headers="headers" :items="transaksis" :search="keyword" :loading="load">
     <template v-slot:top>
       <v-toolbar>
-        <v-toolbar-title>Pengadaan Produk</v-toolbar-title>
+        <v-toolbar-title>Transaksi Produk</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer />
         <v-flex xs5 class="text-right">
@@ -20,88 +20,107 @@
           @click="dialog=true"
           class="mr-4"
         >
-          <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tambah Pengadaan
-        </v-btn>
-
-        <v-btn
-          depressed
-          dark
-          rounded
-          style="text-transform: none !important;"
-          color="indigo accent-3"
-          @click="produkMin()"
-        >
-          <v-icon size="10" class="mr-2">mdi-emoticon-happy</v-icon>Tampil Produk Minimal
+          <v-icon size="10" class="mr-2">mdi-pencil-plus</v-icon>Tambah Transaksi
         </v-btn>
       </v-toolbar>
 
-      <v-dialog v-model="dialog" hide-overlay max width="1200">
-        <!-- persistent -->
+      <v-dialog v-model="dialog" persistent max fullscreen>
         <v-card>
           <v-card-text>
             <v-container>
               <v-col cols="4">
-                Data Transaksi Pengadaan
+                Data Transaksi Produk
                 <v-text-field
                   class="mt-4"
                   v-if="typeInput === 'edit'"
-                  v-model="form.noPO"
-                  label="Nomor PO"
+                  v-model="form.noTransaksi"
+                  label="Nomor Transaksi"
                   outlined
                   readonly
                 ></v-text-field>
               </v-col>
+
               <v-row row>
                 <v-col cols="4">
                   <v-select
-                    :items="suppliers"
-                    item-text="namaSupplier"
-                    item-value="idSupplier"
-                    label="Supplier*"
+                    :items="pegawais"
+                    item-text="namaPegawai"
+                    item-value="NIP"
+                    label="Kasir*"
                     dense
                     outlined
                     rounded
-                    v-model="form.idSupplier"
+                    v-model="form.idKasir"
                     required
                   ></v-select>
                 </v-col>
 
                 <v-col cols="4">
                   <div v-if="typeInput === 'edit'">
-                    Status Pengadaan*
-                    <v-radio-group v-model="form.statusPengadaan" row>
-                      <v-radio label="Belum Datang" value="Belum Datang"></v-radio>
-                      <v-radio label="Sudah Datang" value="Sudah Datang"></v-radio>
+                    Status Pembayaran*
+                    <v-radio-group v-model="form.statusPembayaran" row>
+                      <v-radio label="Sudah Bayar" value="Sudah Bayar"></v-radio>
+                      <v-radio label="Belum Bayar" value="Belum Bayar"></v-radio>
                     </v-radio-group>
                   </div>
                 </v-col>
 
                 <v-col cols="4">
-                  <div v-if="typeInput === 'edit'">
-                    <v-text-field
-                      label="Total Harga"
-                      v-model.number="form.totalHarga"
-                      background-color="blue-grey darken-1"
-                      type="number"
-                      prefix="Rp"
-                      readonly
-                      filled
-                      rounded
-                    ></v-text-field>
-                  </div>
+                  <v-text-field
+                    label="Total Harga"
+                    v-model.number="form.totalHarga"
+                    background-color="blue-grey darken-1"
+                    prefix="Rp"
+                    readonly
+                    filled
+                    rounded
+                  ></v-text-field>
                 </v-col>
               </v-row>
+
+              <!-- <v-col cols="4"> -->
+              <v-row row>
+                <v-col cols="4">
+                  <div>
+                    Membership*
+                    <v-radio-group v-model="form.membership" row>
+                      <v-radio label="Member" value="Member" @change="statusMember = 1"></v-radio>
+                      <v-radio label="Non-Member" value="Non-Member" @change="statusMember = 0"></v-radio>
+                    </v-radio-group>
+                  </div>
+                </v-col>
+
+                <v-col cols="4">
+                  <v-select
+                    v-if="statusMember === 1"
+                    :items="customers"
+                    item-text="namaCustomer"
+                    item-value="idCustomer"
+                    label="Nama Customer*"
+                    dense
+                    outlined
+                    rounded
+                    v-model="form.idCustomer"
+                    required
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <!-- </v-col> -->
             </v-container>
 
             <v-divider />
 
-            <v-container class="mt-4" v-if="typeInput === 'edit'">
+            <v-container class="mt-4">
               Data Produk
-              <div class="form-row" v-for="(detailProduk, index) in detailProduks" :key="index">
+              <div
+                class="form-row"
+                v-for="(detailTransaksi, index) in detailTransaksis"
+                :key="index"
+              >
                 <v-row>
-                  <v-col cols="3">
+                  <v-col cols="4">
                     <v-autocomplete
-                      v-model="detailProduk.idProduk"
+                      v-model="detailTransaksi.idProduk"
                       :items="produks"
                       item-text="namaProduk"
                       item-value="idProduk"
@@ -114,12 +133,8 @@
                   </v-col>
 
                   <v-col cols="2">
-                    <v-text-field v-model="detailProduk.satuan" label="Satuan*" outlined rounded></v-text-field>
-                  </v-col>
-
-                  <v-col cols="2">
                     <v-text-field
-                      v-model="detailProduk.jumlah"
+                      v-model="detailTransaksi.jumlah"
                       required
                       type="number"
                       label="Jumlah*"
@@ -132,7 +147,7 @@
 
                   <v-col cols="2">
                     <v-text-field
-                      v-model="detailProduk.harga"
+                      v-model="detailTransaksi.harga"
                       label="Harga"
                       readonly
                       outlined
@@ -141,9 +156,9 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="2">
+                  <v-col cols="3">
                     <v-text-field
-                      v-model="detailProduk.subtotal"
+                      v-model="detailTransaksi.subtotal"
                       label="Subtotal"
                       number
                       readonly
@@ -160,7 +175,7 @@
                           <v-btn
                             color="red lighten-2"
                             icon
-                            @click="hitungTotal(), deleteDetailProduk(index), deleteRow(index)"
+                            @click="deleteRow(index), hitungTotal(), deleteDetailProduk(index)"
                             class="pt-3"
                           >
                             <v-icon>mdi-close</v-icon>
@@ -204,6 +219,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
       <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
         {{ text }}
         <v-btn dark text @click="snackbar=false">Close</v-btn>
@@ -212,8 +228,7 @@
 
     <template v-slot:item.actions="{ item }">
       <v-icon color="indigo" @click="editHandler(item)">mdi-pencil</v-icon>
-      <v-icon color="error" @click="deleteData(item.noPO)">mdi-delete</v-icon>
-      <v-icon color="teal" @click="print(item.noPO)">mdi-printer</v-icon>
+      <v-icon color="error" @click="deleteData(item.noTransaksi)">mdi-delete</v-icon>
     </template>
   </v-data-table>
 </template>
@@ -227,24 +242,32 @@ export default {
     keyword: "",
     headers: [
       {
-        text: "No. PO",
-        value: "noPO"
+        text: "No. Transaksi",
+        value: "noTransaksi"
       },
       {
-        text: "Tanggal Pengadaan",
-        value: "tglPengadaan"
+        text: "Tanggal Transaksi",
+        value: "tglTransaksi"
       },
       {
-        text: "Supplier",
-        value: "namaSupplier"
+        text: "Total Biaya",
+        value: "totalBiaya"
       },
       {
-        text: "Total Harga",
-        value: "totalHarga"
+        text: "Status Pembayaran",
+        value: "statusPembayaran"
       },
       {
-        text: "Status Pengadaan",
-        value: "statusPengadaan"
+        text: "Nama Customer",
+        value: "namaCustomer"
+      },
+      {
+        text: "Dilayani oleh",
+        value: "idCustomerService"
+      },
+      {
+        text: "Pembayaran ke",
+        value: "idKasir"
       },
       {
         text: "Action",
@@ -252,149 +275,130 @@ export default {
         sortable: false
       }
     ],
-    pengadaans: [],
-    suppliers: [],
-    produks: [],
+    transaksis: [],
+    customers: [],
+    pegawais: [],
     details: [],
-    itemss: [],
+    produks: [],
     snackbar: false,
     color: null,
     text: "",
-    status: 0,
     load: false,
     form: {
-      idSupplier: "",
-      namaSupplier: "",
-      statusPengadaan: "",
-      statusCetak: "",
-      totalHarga: 0
+      noTransaksi: "",
+      idCustomer: "",
+      namaCustomer: "",
+      statusPembayaran: "",
+      idCS: "",
+      namaCS: "",
+      idKasir: "",
+      namaKasir: "",
+      totalHarga: 0,
+      membership: ""
     },
-    form2: {
-      idProduk: "",
-      namaProduk: "",
-      jumlah: "",
-      satuan: "",
-      subtotal: 0
-    },
-    detailProduks: [
+    detailTransaksis: [
       {
-        noPO: "",
+        noTransaksi: "",
         idProduk: "",
         namaProduk: "",
         jumlah: 0,
         harga: 0,
-        subtotal: 0,
-        satuan: ""
+        subtotal: 0
       }
     ],
     temp: [],
-    pengadaan: new FormData(),
-    DTPengadaan: new FormData(),
-    typeInput: "new"
+    transaksi: new FormData(),
+    DTTransaksi: new FormData(),
+    typeInput: "new",
+    statusMember: 1
   }),
   methods: {
     getData() {
-      var uri = this.$apiUrl + "transaksiPengadaan";
-      this.$http.get(uri, this.pengadaan).then(response => {
-        this.pengadaans = response.data.transaksiPengadaan;
+      var uri = this.$apiUrl + "transaksiProduk";
+      this.$http.get(uri).then(response => {
+        this.transaksis = response.data.transaksiProduk;
       });
     },
 
-    getSupplier() {
-      var uri = this.$apiUrl + "supplier";
-      this.$http.get(uri, this.supplier).then(response => {
-        this.suppliers = response.data.supplier;
-        // this.form.idSupplier = response.data.supplier[0].idSupplier;
+    getCustomer() {
+      var uri = this.$apiUrl + "customer";
+      this.$http.get(uri).then(response => {
+        this.customers = response.data.customer;
+        this.form.idCustomer = response.data.customer[0].idCustomer;
+      });
+    },
+
+    getKasir() {
+      var uri = this.$apiUrl + "pegawai/kasir/hehe";
+      this.$http.get(uri).then(response => {
+        this.pegawais = response.data.pegawai;
       });
     },
 
     getProduk() {
-      var uri = this.$apiUrl + "produk/minimal";
+      var uri = this.$apiUrl + "produk";
       this.$http.get(uri).then(response => {
         this.produks = response.data.produk;
       });
     },
 
-    getDetailProduk() {
-      var uri = this.$apiUrl + "dtPengadaan";
-      this.$http.get(uri).then(response => {
-        this.details = response.data.DTPengadaan;
-      });
-    },
-
-    getDetailByPO(item) {
-      this.form.noPO = item.noPO;
-      var uri = this.$apiUrl + "dtPengadaan/tampil/" + item.noPO;
-      this.$http.get(uri).then(response => {
-        this.itemss = response.data.DTPengadaan;
-      });
-      this.dialog = true;
-    },
-
     hitungSubTotal(index) {
       var uri =
-        this.$apiUrl + `produk/cari/${this.detailProduks[index].idProduk}`;
-      this.$http.get(uri, this.produk).then(response => {
-        this.detailProduks[index].harga = response.data.produk[0].harga;
-        this.detailProduks[index].subtotal =
-          this.detailProduks[index].harga * this.detailProduks[index].jumlah;
+        this.$apiUrl + `produk/cari/${this.detailTransaksis[index].idProduk}`;
+      this.$http.get(uri).then(response => {
+        this.detailTransaksis[index].harga = response.data.produk[0].harga;
+        this.detailTransaksis[index].subtotal =
+          this.detailTransaksis[index].harga *
+          this.detailTransaksis[index].jumlah;
       });
     },
 
     hitungTotal() {
       this.form.totalHarga = 0;
-      for (var i = 0; i < this.detailProduks.length; i++) {
+      for (var i = 0; i < this.detailTransaksis.length; i++) {
         parseInt(
           (this.form.totalHarga =
-            this.form.totalHarga + this.detailProduks[i].subtotal)
+            this.form.totalHarga + this.detailTransaksis[i].subtotal)
         );
       }
     },
 
     sendData() {
       var uri = this.$apiUrl + "transaksiPengadaan";
-      this.pengadaan.append("idSupplier", this.form.idSupplier);
+      this.transaksi.append("idSupplier", this.form.idSupplier);
       this.load = true;
       this.$http
-        .post(uri, this.pengadaan)
+        .post(uri, this.transaksi)
         .then(response => {
-          if (typeInput === "new") {
-            this.snackbar = true; //mengaktifkan snackbar
-            this.color = "green"; //memberi warna snackbar
-            this.text = response.data.status; //memasukkan pesan kesnackbar
-            this.load = false;
-            this.dialog = false;
-            this.getData();
-          } else {
-            this.sendDtPengadaan();
-          }
+          this.sendDtTransaksi();
         })
         .catch(error => {
+          this.errors = error;
+          this.snackbar = true;
+          this.text = "Try Again";
+          this.color = "red";
           this.load = false;
-          this.dialog = false;
-          this.getData();
         });
     },
 
-    sendDtPengadaan() {
+    sendDtTransaksi() {
       var uri;
-      var noPO = this.form.noPO;
-      for (var i = 0; i < this.detailProduks.length; i++) {
-        if (this.typeInput === "edit") {
-          if (this.cek(noPO, this.detailProduks[i].idProduk) == 1)
-            uri = this.$apiUrl + "dtPengadaan/update";
-          else uri = this.$apiUrl + "dtPengadaan";
+      var noTransaksi = this.form.noTransaksi;
+      for (var i = 0; i < this.detailTransaksis.length; i++) {
+        if (this.typeInput == "edit") {
+          if (this.cek(noTransaksi, this.detailTransaksis[i].idProduk) == 1)
+            uri = this.$apiUrl + "dtProduk/update";
+          else uri = this.$apiUrl + "dtProduk";
         } else {
-          uri = this.$apiUrl + "dtPengadaan";
+          uri = this.$apiUrl + "dtProduk";
         }
 
-        this.DTPengadaan.append("noPO", noPO);
-        this.DTPengadaan.append("idProduk", this.detailProduks[i].idProduk);
-        this.DTPengadaan.append("jumlah", this.detailProduks[i].jumlah);
-        this.DTPengadaan.append("satuan", this.detailProduks[i].satuan);
+        this.DTTransaksi.append("noTransaksi", noTransaksi);
+        this.DTTransaksi.append("idProduk", this.detailTransaksis[i].idProduk);
+        this.DTTransaksi.append("jumlah", this.detailTransaksis[i].jumlah);
 
         this.$http
-          .post(uri, this.DTPengadaan)
+          .post(uri, this.DTTransaksi)
           .then(response => {
             this.snackbar = true; //mengaktifkan snackbar
             this.color = "green"; //memberi warna snackbar
@@ -413,9 +417,9 @@ export default {
       }
     },
 
-    cek($noPO, $idP) {
+    cek($noTransaksi, $idP) {
       for (var i = 0; i < this.details.length; i++) {
-        if (this.details[i].noPO == $noPO) {
+        if (this.details[i].noTransaksi == $noTransaksi) {
           if (this.details[i].idProduk == $idP) return 1;
         }
       }
@@ -423,10 +427,11 @@ export default {
     },
 
     editHandler(item) {
+      // this.getDetailByPO(item);
       this.typeInput = "edit";
       this.dialog = true;
-      this.noPO = item.noPO;
-      this.form.noPO = item.noPO;
+      this.noTransaksi = item.noTransaksi;
+      this.form.noTransaksi = item.noTransaksi;
       this.form.statusPengadaan = item.statusPengadaan;
       this.form.totalHarga = item.totalHarga;
       for (var i = 0; i < this.suppliers.length; i++) {
@@ -434,30 +439,27 @@ export default {
           this.form.idSupplier = this.suppliers[i].idSupplier;
         }
       }
-      this.detailProduks = [];
       for (var i = 0; i < this.details.length; i++) {
-        if (this.details[i].noPO == item.noPO) {
+        if (this.details[i].noTransaksi == item.noTransaksi) {
           this.details[i].subtotal =
             this.details[i].jumlah * this.details[i].harga;
-          this.detailProduks.push(this.details[i]);
+          this.details[i].idProduk = this.details[i].idProduk;
+          this.detailTransaksis.push(this.details[i]);
         }
       }
     },
 
     updateData() {
-      this.pengadaan.append("idSupplier", this.form.idSupplier);
-      this.pengadaan.append("statusPengadaan", this.form.statusPengadaan);
-      this.pengadaan.append("totalHarga", this.form.totalHarga);
+      this.transaksi.append("idSupplier", this.form.idSupplier);
+      this.transaksi.append("statusPengadaan", this.form.statusPengadaan);
+      this.transaksi.append("totalHarga", this.form.totalHarga);
 
-      var uri = this.$apiUrl + `transaksiPengadaan/${this.noPO}`;
+      var uri = this.$apiUrl + `transaksiPengadaan/${this.noTransaksi}`;
       this.load = true;
       this.$http
-        .post(uri, this.pengadaan)
+        .post(uri, this.transaksi)
         .then(response => {
-          if (this.form.statusPengadaan == "Sudah Datang") {
-            updateStokProduk();
-          }
-          this.sendDtPengadaan();
+          this.sendDtTransaksi();
         })
         .catch(error => {
           this.errors = error;
@@ -470,13 +472,13 @@ export default {
         });
     },
 
-    deleteData(noPO) {
+    deleteData(noTransaksi) {
       var uri;
 
       if (confirm("Apakah Anda ingin menghapus Pengadaan ini?")) {
-        uri = this.$apiUrl + "transaksiPengadaan/" + noPO;
+        uri = this.$apiUrl + "transaksiPengadaan/" + noTransaksi;
         this.$http
-          .delete(uri, this.pengadaan)
+          .delete(uri, this.transaksi)
           .then(response => {
             this.snackbar = true;
             this.text = response.data.status;
@@ -497,14 +499,14 @@ export default {
     },
 
     deleteDetailProduk(index) {
-      var uri = this.$apiUrl + "dtPengadaan/delete";
-      var noPO = this.form.noPO;
-      var idProduk = this.detailProduks[index].idProduk;
+      var uri = this.$apiUrl + "dtProduk";
+      var noTransaksi = this.form.noTransaksi;
+      var idProduk = this.detailTransaksis[index].idProduk;
 
-      this.DTPengadaan.append("noPO", noPO);
-      this.DTPengadaan.append("idProduk", idProduk);
+      this.DTTransaksi.append("noTransaksi", noTransaksi);
+      this.DTTransaksi.append("idProduk", idProduk);
       this.$http
-        .post(uri, this.DTPengadaan)
+        .delete(uri, this.DTTransaksi)
         .then(response => {
           this.snackbar = true;
           this.text = response.data.status;
@@ -539,80 +541,34 @@ export default {
     },
 
     resetDynamicForm() {
-      while (this.detailProduks.length != 0) {
-        for (var i = 0; i < this.detailProduks.length; i++) {
-          this.detailProduks.splice(this.detailProduks[i], 1);
-          this.temp.push(this.detailProduks[i]);
+      while (this.detailTransaksis.length != 0) {
+        for (var i = 0; i < this.detailTransaksis.length; i++) {
+          this.detailTransaksis.splice(this.detailTransaksis[i], 1);
+          this.temp.push(this.detailTransaksis[i]);
           console.log(this.temp);
         }
       }
     },
-
-    produkMin(noPO) {
-      this.$router.push({ name: "ProdukMinimal" });
-    },
-
-    print(noPO) {
-      var uri = this.$apiUrl + "transaksiPengadaan/cetak/" + noPO;
-      this.DTPengadaan.append("statusCetak", "Sudah Dicetak");
-      this.$http
-        .get(uri, { responseType: "blob" }, this.DTPengadaan)
-        .then(response => {
-          const file = new Blob([response.data], { type: "application/pdf" });
-          //Build a URL from the file
-          const fileURL = URL.createObjectURL(file);
-          //Open the URL on new Window
-          window.open(fileURL);
-          this.getData();
-        })
-        .catch(error => {});
-    },
-
     deleteRow(index) {
-      this.detailProduks.splice(index, 1);
+      this.detailTransaksis.splice(index, 1);
     },
 
     addRow() {
-      this.detailProduks.push({
+      this.detailTransaksis.push({
         namaProduk: "",
         jumlah: 0,
         harga: 0,
-        subtotal: 0,
-        satuan: ""
+        subtotal: 0
       });
-    },
-
-    updateStokProduk() {
-      var uri =
-        this.$apiUrl + `produk/cari/${this.detailProduks[index].idProduk}`;
-      var uri2 =
-        this.$apiUrl +
-        `produk/updateStok/${this.detailProduks[index].idProduk}`;
-      var stok;
-      var temp;
-      for (var i = 0; i < this.detailProduks.length; i++) {
-        this.$http.get(uri).then(response => {
-          stok = response.data.produk[0].stok;
-          temp = stok + this.detailProduks[index].jumlah;
-        });
-        this.DTPengadaan.append("stok", temp);
-        this.DTPengadaan.append("idPegawaiLog", this.idPegawaiLog);
-        this.$http.post(uri2, this.DTPengadaan).then(response => {
-          this.snackbar = true;
-          this.text = response.data.status;
-          this.color = "green";
-          this.getData();
-        });
-      }
     }
   },
 
   mounted() {
     this.getData();
+    this.getKasir();
     this.getProduk();
-    this.getSupplier();
-    this.getDetailProduk();
-    this.idPegawaiLog = this.$session.get("NIP");
+    this.getCustomer();
+    // this.idCS = this.$session.get("NIP");
   }
 };
 </script>

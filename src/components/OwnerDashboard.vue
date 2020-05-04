@@ -74,7 +74,7 @@
     <v-app-bar dark app fixed clipped-left height="70px" color="grey darken-3">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer />
-      <v-toolbar-title>Kouvee Petshop - {{this.nama}}</v-toolbar-title>
+      <v-toolbar-title>Kouvee Pet Shop - {{this.nama}}</v-toolbar-title>
       <v-spacer />
 
       <v-tooltip bottom>

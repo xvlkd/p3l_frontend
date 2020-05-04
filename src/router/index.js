@@ -101,6 +101,16 @@ const routes = [{
 				path: '/hewan',
 				component: loadDashboardCS('Hewan')
 			},
+			{
+				name: 'Transaksi Produk',
+				path: '/transaksiProduk',
+				component: loadDashboardCS('TransaksiProduk')
+			},
+			{
+				name: 'Transaksi Layanan',
+				path: '/transaksiLayanan',
+				component: loadDashboardCS('TransaksiLayanan')
+			},
 		]
 	},
 
@@ -108,16 +118,17 @@ const routes = [{
 		name: 'KasirPage',
 		path: '/kasir',
 		component: DashboardKasir,
-		children: [{
-				name: 'Transaksi Produk',
-				path: '/transaksiProduk',
-				component: loadDashboardKasir('TransaksiProduk')
-			},
-			{
-				name: 'Transaksi Layanan',
-				path: '/transaksiLayanan',
-				component: loadDashboardKasir('TransaksiLayanan')
-			},
+		children: [
+			// {
+			// 	name: 'Transaksi Produk',
+			// 	path: '/transaksiProduk',
+			// 	component: loadDashboardKasir('TransaksiProduk')
+			// },
+			// {
+			// 	name: 'Transaksi Layanan',
+			// 	path: '/transaksiLayanan',
+			// 	component: loadDashboardKasir('TransaksiLayanan')
+			// },
 		]
 	}
 ];

@@ -29,7 +29,7 @@
     <v-app-bar dark app fixed clipped-left height="70px" color="grey darken-3">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer />
-      <v-toolbar-title>Kouvee Petshop - {{nama}}</v-toolbar-title>
+      <v-toolbar-title>Kouvee Pet Shop - {{nama}}</v-toolbar-title>
       <v-spacer />
 
       <v-tooltip bottom>
@@ -64,11 +64,21 @@ export default {
         title: "Hewan",
         icon: "mdi-dog-service",
         to: "/Hewan"
+      },
+      {
+        title: "Transaksi Produk",
+        icon: "mdi-account-box-multiple",
+        to: "/transaksiProduk"
+      },
+      {
+        title: "Transaksi Layanan",
+        icon: "mdi-dog-service",
+        to: "/transaksiLayanan"
       }
     ],
     nip: "",
     nama: "",
-    jabatan: "",
+    jabatan: ""
   }),
 
   created() {
@@ -82,14 +92,12 @@ export default {
     }
   },
 
-  mounted(){
-    if(!this.$session.exists())
-      this.$router.push({ name: "Login Page" });
-    else
-    {
-      this.nip= this.$session.get('NIP');
-      this.nama= this.$session.get("Nama");
-      this.jabatan= this.$session.get("Jabatan");
+  mounted() {
+    if (!this.$session.exists()) this.$router.push({ name: "Login Page" });
+    else {
+      this.nip = this.$session.get("NIP");
+      this.nama = this.$session.get("Nama");
+      this.jabatan = this.$session.get("Jabatan");
     }
   }
 };
