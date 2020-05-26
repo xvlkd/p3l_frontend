@@ -41,7 +41,7 @@
               </v-col>
 
               <v-row row>
-                <v-col cols="4">
+                <!-- <v-col cols="4">
                   <div v-if="typeInput === 'edit'">
                     Status Pembayaran*
                     <v-radio-group v-model="form.statusPembayaran" row>
@@ -49,7 +49,7 @@
                       <v-radio label="Belum Bayar" value="Belum Bayar"></v-radio>
                     </v-radio-group>
                   </div>
-                </v-col>
+                </v-col>-->
 
                 <v-col cols="4" v-if="typeInput==='edit'">
                   <v-text-field
@@ -161,7 +161,7 @@
                           <v-btn
                             color="red lighten-2"
                             icon
-                            @click="deleteRow(index), hitungTotal(), deleteDetailProduk(index)"
+                            @click="hitungTotal(), deleteDetailProduk(index), deleteRow(index)"
                             class="pt-3"
                           >
                             <v-icon>mdi-close</v-icon>
@@ -375,7 +375,7 @@ export default {
             this.dialog = false;
             this.getData();
           } else {
-            this.sendDtPengadaan();
+            this.sendDtTransaksi();
           }
         })
         .catch(error => {
@@ -464,6 +464,7 @@ export default {
       this.$http
         .post(uri, this.transaksi)
         .then(response => {
+          this.updateStok();
           this.sendDtTransaksi();
         })
         .catch(error => {
@@ -504,14 +505,14 @@ export default {
     },
 
     deleteDetailProduk(index) {
-      var uri = this.$apiUrl + "dtProduk";
+      var uri = this.$apiUrl + "dtProduk/delete";
       var noTransaksi = this.form.noTransaksi;
       var idProduk = this.detailTransaksis[index].idProduk;
 
       this.DTTransaksi.append("noTransaksi", noTransaksi);
       this.DTTransaksi.append("idProduk", idProduk);
       this.$http
-        .delete(uri, this.DTTransaksi)
+        .post(uri, this.DTTransaksi)
         .then(response => {
           this.snackbar = true;
           this.text = response.data.status;
@@ -571,6 +572,25 @@ export default {
         harga: 0,
         subtotal: 0
       });
+    },
+
+    updateStok() {
+      var stok;
+      var temp;
+
+      for (var i = 0; i < this.detailTransaksis.length; i++) {
+        var id = this.detailTransaksis[i].idProduk;
+        var uri = this.$apiUrl + `produk/cari/${id}`;
+        var uri2 = this.$apiUrl + `produk/updateStok/${id}`;
+        var jumlah = this.detailTransaksis[i].jumlah;
+        this.$http.get(uri).then(response => {
+          stok = parseInt(response.data.produk[0].stok);
+          temp = stok - parseInt(jumlah);
+          this.DTTransaksi.append("stok", temp);
+          this.DTTransaksi.append("idPegawaiLog", "Owner");
+          this.$http.post(uri2, this.DTTransaksi);
+        });
+      }
     }
   },
 

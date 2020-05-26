@@ -454,9 +454,7 @@ export default {
       this.$http
         .post(uri, this.pengadaan)
         .then(response => {
-          if (this.form.statusPengadaan == "Sudah Datang") {
-            updateStokProduk();
-          }
+          this.updateStok();
           this.sendDtPengadaan();
         })
         .catch(error => {
@@ -582,27 +580,23 @@ export default {
       });
     },
 
-    updateStokProduk() {
-      var uri =
-        this.$apiUrl + `produk/cari/${this.detailProduks[index].idProduk}`;
-      var uri2 =
-        this.$apiUrl +
-        `produk/updateStok/${this.detailProduks[index].idProduk}`;
+    updateStok() {
       var stok;
       var temp;
-      for (var i = 0; i < this.detailProduks.length; i++) {
-        this.$http.get(uri).then(response => {
-          stok = response.data.produk[0].stok;
-          temp = stok + this.detailProduks[index].jumlah;
-        });
-        this.DTPengadaan.append("stok", temp);
-        this.DTPengadaan.append("idPegawaiLog", this.idPegawaiLog);
-        this.$http.post(uri2, this.DTPengadaan).then(response => {
-          this.snackbar = true;
-          this.text = response.data.status;
-          this.color = "green";
-          this.getData();
-        });
+      if (this.form.statusPengadaan == "Sudah Datang") {
+        for (var i = 0; i < this.detailProduks.length; i++) {
+          var id = this.detailProduks[i].idProduk;
+          var uri = this.$apiUrl + `produk/cari/${id}`;
+          var uri2 = this.$apiUrl + `produk/updateStok/${id}`;
+          var jumlah = this.detailProduks[i].jumlah;
+          this.$http.get(uri).then(response => {
+            stok = parseInt(response.data.produk[0].stok);
+            temp = stok + parseInt(jumlah);
+            this.DTPengadaan.append("stok", temp);
+            this.DTPengadaan.append("idPegawaiLog", this.idPegawaiLog);
+            this.$http.post(uri2, this.DTPengadaan);
+          });
+        }
       }
     }
   },
