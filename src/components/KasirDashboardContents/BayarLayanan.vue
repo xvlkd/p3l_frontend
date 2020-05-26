@@ -239,7 +239,6 @@
         <v-btn dark text @click="snackbar=false">Close</v-btn>
       </v-snackbar>
     </template>
-    <!-- v-if="form.statusLayanan==='Selesai'" -->
     <template v-slot:item.actions="{ item }">
       <v-icon color="indigo" @click="editHandler(item), getHewan()">mdi-pencil</v-icon>
       <v-icon color="error" @click="deleteData(item.noTransaksi)">mdi-delete</v-icon>
