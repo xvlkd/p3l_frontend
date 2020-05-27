@@ -29,6 +29,7 @@
           </v-list-item>
         </v-list-group>
         <v-divider />
+
         <v-list-group prepend-icon="mdi-bank-transfer" no-action>
           <template v-slot:activator>
             <v-list-item-title>Transaksi</v-list-item-title>
@@ -49,12 +50,13 @@
           </v-list-item>
         </v-list-group>
         <v-divider />
+
         <v-list-group prepend-icon="mdi-alpha-d-circle" no-action>
           <template v-slot:activator>
-            <v-list-item-title>Detail</v-list-item-title>
+            <v-list-item-title>Laporan</v-list-item-title>
           </template>
           <v-list-item
-            v-for="item in details"
+            v-for="item in laporans"
             :key="item.title"
             link
             @click="$router.push(item.to)"
@@ -138,7 +140,23 @@ export default {
         to: "/produkMin"
       }
     ],
-    details: [],
+    laporans: [
+      {
+        title: "Pengadaan Produk",
+        icon: "mdi-book",
+        to: "/laporanPengadaan"
+      },
+      {
+        title: "Penjualan Terlaris",
+        icon: "mdi-book-open",
+        to: "/laporanPenjualanTerlaris"
+      },
+      {
+        title: "Pendapatan",
+        icon: "mdi-book-plus",
+        to: "/laporanPendapatan"
+      }
+    ],
     nip: "",
     nama: "",
     jabatan: ""

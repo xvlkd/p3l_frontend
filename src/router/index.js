@@ -84,6 +84,24 @@ const routes = [{
 				path: '/pengadaan',
 				component: loadDashboardOWner('Pengadaan')
 			},
+
+			{
+				name: 'Laporan Pengadaan',
+				path: '/laporanPengadaan',
+				component: loadDashboardOWner('LaporanPengadaan')
+			},
+
+			{
+				name: 'Laporan Penjualan',
+				path: '/laporanPenjualanTerlaris',
+				component: loadDashboardOWner('LaporanPenjualan')
+			},
+
+			{
+				name: 'Laporan Pendapatan',
+				path: '/laporanPendapatan',
+				component: loadDashboardOWner('LaporanPendapatan')
+			},
 		]
 	},
 
