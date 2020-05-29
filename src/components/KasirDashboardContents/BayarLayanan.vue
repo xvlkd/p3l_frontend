@@ -48,7 +48,7 @@
                     Status Layanan*
                     <v-radio-group v-model="form.statusLayanan">
                       <v-radio label="Belum Selesai" value="Belum Selesai" @change="status = 0"></v-radio>
-                      <v-radio label="Selesai" value="Selesai" @change="status = 1"></v-radio>
+                      <v-radio label="Sudah Selesai" value="Sudah Selesai" @change="status = 1"></v-radio>
                     </v-radio-group>
                   </div>
                 </v-col>
@@ -490,13 +490,17 @@ export default {
       this.transaksi.append("diskon", this.form.diskon);
 
       var uri = this.$apiUrl + `transaksiLayanan/${this.noTransaksi}`;
+      var uri2 = this.$apiUrl + `transaksiLayanan/sms/${this.noTransaksi}`;
       this.load = true;
       this.$http
         .post(uri, this.transaksi)
         .then(response => {
           this.sendDtTransaksi();
-          if (this.form.statusPembayaran == "Sudah Bayar") {
-            this.print(this.form.noTransaksi);
+          if (this.form.statusLayanan == "Sudah Selesai") {
+            this.$http.post(uri2, this.transaksi);
+            if (this.form.statusPembayaran == "Sudah Bayar") {
+              this.print(this.form.noTransaksi);
+            }
           }
         })
         .catch(error => {
