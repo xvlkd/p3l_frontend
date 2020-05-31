@@ -68,6 +68,7 @@ export default {
       this.pegawai.append("NIP", this.form.NIP);
       this.pegawai.append("kataSandi", this.form.kataSandi);
       var uri = this.$apiUrl + "pegawai/login";
+      var uri2 = this.$apiUrl + "produk/email";
       this.$http
         .post(uri, this.pegawai)
         .then(response => {
@@ -82,6 +83,7 @@ export default {
           this.$session.set("Jabatan", response.data.pegawai[0].jabatan);
 
           if (this.form.NIP == "Owner") {
+            this.$http.get(uri2);
             this.$router.push({ name: "OwnerPage" });
           } else if (this.form.NIP.includes("CS")) {
             this.$router.push({ name: "CSPage" });
