@@ -530,7 +530,7 @@ export default {
           this.snackbar = true;
           this.text = response.data.status;
           this.color = "green";
-          //   this.restoreStok();
+          this.restoreStok();
           this.getData();
         })
         .catch(error => {

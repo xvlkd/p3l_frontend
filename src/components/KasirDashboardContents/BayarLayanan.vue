@@ -498,9 +498,9 @@ export default {
           this.sendDtTransaksi();
           if (this.form.statusLayanan == "Sudah Selesai") {
             this.$http.post(uri2, this.transaksi);
-            if (this.form.statusPembayaran == "Sudah Bayar") {
-              this.print(this.form.noTransaksi);
-            }
+          }
+          if (this.form.statusPembayaran == "Sudah Bayar") {
+            this.print(this.form.noTransaksi);
           }
         })
         .catch(error => {
@@ -540,12 +540,15 @@ export default {
     },
 
     deleteDetailLayanan(index) {
-      var uri = this.$apiUrl + "dtLayanan";
+      var uri = this.$apiUrl + "dtLayanan/delete";
       var noTransaksi = this.form.noTransaksi;
       var idLayanan = this.detailTransaksis[index].idLayanan;
 
       this.DTTransaksi.append("noTransaksi", noTransaksi);
-      this.DTTransaksi.append("idLayanan", idLayanan);
+      this.DTTransaksi.append(
+        "idLayanan",
+        this.detailTransaksis[index].idLayanan
+      );
       this.$http
         .post(uri, this.DTTransaksi)
         .then(response => {
