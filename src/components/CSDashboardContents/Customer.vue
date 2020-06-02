@@ -151,7 +151,7 @@ export default {
       this.customer.append("noHp", this.form.noHp);
       this.customer.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + "customer/" + this.idCustomer;
+      var uri = this.$apiUrl + "customer/update/" + this.idCustomer;
       this.load = true;
       this.$http.post(uri, this.customer).then(this.getData(), this.resetForm(), this.load = false);
     },

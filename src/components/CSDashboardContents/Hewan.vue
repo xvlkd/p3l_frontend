@@ -151,7 +151,7 @@ export default {
       this.hewan.append("idCustomer", this.form.idCustomer);
       this.hewan.append("idPegawaiLog", this.form.idPegawaiLog);
 
-      var uri = this.$apiUrl + "hewan/" + this.idHewan;
+      var uri = this.$apiUrl + "hewan/update/" + this.idHewan;
       this.load = true;
       this.$http.post(uri, this.hewan).then(this.getData(), this.resetForm(), this.load = false,);
     },
